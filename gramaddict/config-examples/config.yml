@@ -34,13 +34,13 @@ debug: true
 # ##############################################################################
 
 # ## Interaction (active jobs)
-blogger-followers: neymarjr
-# blogger-following: [ username1, username2 ]
+#blogger-followers: neymarjr
+blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
 # blogger: [ username1, username2 ]
-# hashtag-likers-top: [ hashtag1, hashtag2 ]
-# hashtag-likers-recent: [ hashtag1, hashtag2 ]
-# hashtag-posts-top: [ hashtag1, hashtag2 ]
+#hashtag-likers-top: [ iot, atome ]
+#hashtag-likers-recent: [ iot, atome ]
+#hashtag-posts-top: [ smartfarm, devops ]
 # hashtag-posts-recent: [ hashtag1, hashtag2 ]
 # place-posts-top: [ place1, place2 ]
 # place-posts-recent: [ place1, place2 ]
@@ -51,7 +51,7 @@ blogger-followers: neymarjr
 # feed: 2-5 # is the number of likes you will give in feed
 
 # ## Special modifier for jobs and sources
-# watch-video-time: 15-35
+#watch-video-time: 15-35
 # watch-photo-time: 3-4
 # # can-reinteract-after: 48 # the amount of hours that have to pass from the last interaction
 # delete-interacted-users: true
@@ -86,19 +86,19 @@ blogger-followers: neymarjr
 # # Source Limits
 # ##############################################################################
 
-interactions-count: 2
-# likes-count: 1-2
-# likes-percentage: 100
-# stories-count: 1-2
-# stories-percentage: 30-40
+interactions-count: 10
+likes-count: 5
+likes-percentage: 100
+stories-count: 5
+stories-percentage: 100
 # carousel-count: 2-3
 # carousel-percentage: 60-70
 # max-comments-pro-user: 1-2
 # # comment-percentage: 30-40
 # # pm-percentage: 30-40
-# interact-percentage: 30-40
-# follow-percentage: 30-40
-# follow-limit: 50
+interact-percentage: 100
+follow-percentage: 100
+follow-limit: 8
 # skipped-list-limit: 10-15
 # skipped-posts-limit: 5
 # fling-when-skipped: 0
@@ -133,6 +133,6 @@ interactions-count: 2
 # ##############################################################################
 
 # working-hours: [10.15-16.40, 18.15-22.46]
-# time-delta: 10-15
+#time-delta: 3-5
 # repeat: 280-320
 # total-sessions: 1 # -1 or commented for infinite sessions

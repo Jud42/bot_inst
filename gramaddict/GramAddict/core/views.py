@@ -1535,8 +1535,12 @@ class ProfileView(ActionBarView):
 
     def _new_ui_profile_button(self) -> bool:
         found = False
-        buttons = self.device.find(className=ResourceID.BUTTON)
+        buttons = self.device.find(resourceIdMatches=ResourceID.TAB_BAR)
+        if not buttons.exists():
+            print(f"Button n'existe pas: Obj av for")
         for button in buttons:
+            print(f"Button content check: Obj ap for=========: {button.get_desc()}")
+
             if button.get_desc() == "Profile":
                 button.click()
                 found = True
@@ -1546,11 +1550,13 @@ class ProfileView(ActionBarView):
         found = False
         obj = self.device.find(resourceIdMatches=ResourceID.TAB_AVATAR)
         if obj.exists(Timeout.MEDIUM):
+            print(f"Button content : Obj exist=========: {obj.get_resource_id()}")
             obj.click()
             found = True
         return found
 
     def click_on_avatar(self):
+        print(vars(self))
         while True:
             if self._new_ui_profile_button():
                 break
