@@ -63,7 +63,7 @@ class ResourceID:
             f"{APP_ID}:id/layout_comment_thread_edittext"
         )
         self.LAYOUT_COMMENT_THREAD_POST_BUTTON_CLICK_AREA = (
-            f"{APP_ID}:id/layout_comment_thread_post_button_click_area"
+            f"{APP_ID}:id/layout_comment_thread_post_button_icon"
         )
         self.LIKE_BUTTON = f"{APP_ID}:id/like_button"
         self.LIVE_BADGE_VIEW = f"{APP_ID}:id/live_badge_view"

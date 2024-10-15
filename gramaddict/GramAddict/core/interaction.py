@@ -648,24 +648,33 @@ def _comment(
                     universal_actions.close_keyboard(device)
                     device.back()
                     return False
-
-                universal_actions.detect_block(device)
-                universal_actions.close_keyboard(device)
-                posted_text = device.find(
-                    text=f"{my_username} {comment}",
-                )
-                when_posted = posted_text.sibling(
-                    resourceId=ResourceID.ROW_COMMENT_SUB_ITEMS_BAR
-                ).child(resourceId=ResourceID.ROW_COMMENT_TEXTVIEW_TIME_AGO)
-                if posted_text.exists(Timeout.MEDIUM) and when_posted.exists(
-                    Timeout.MEDIUM
-                ):
+                
+                if comment_box.get_text() != comment:
                     logger.info("Comment succeed.", extra={"color": f"{Fore.GREEN}"})
                     session_state.totalComments += 1
                     comment_confirmed = True
                 else:
                     logger.warning("Failed to check if comment succeed.")
                     comment_confirmed = False
+                universal_actions.detect_block(device)
+                universal_actions.close_keyboard(device)
+                # posted_text = device.find(
+                #     text=f"{my_username} {comment}",
+                # )
+                # print("==POSTED TEXT exist==") if posted_text.exists() else print("==POSTED TEXT DOESN'T EXIST==")
+                # when_posted = posted_text.sibling(
+                #     resourceId=ResourceID.ROW_COMMENT_SUB_ITEMS_BAR
+                # ).child(resourceId=ResourceID.ROW_COMMENT_TEXTVIEW_TIME_AGO)
+                # print("==WHEN_POSTED TEXT exist==") if posted_text.exists() else print("==WHEN_POSTED TEXT DOESN'T EXIST==")
+                # if posted_text.exists(Timeout.MEDIUM) and when_posted.exists(
+                #     Timeout.MEDIUM
+                # ):
+                #     logger.info("Comment succeed.", extra={"color": f"{Fore.GREEN}"})
+                #     session_state.totalComments += 1
+                #     comment_confirmed = True
+                # else:
+                #     logger.warning("Failed to check if comment succeed.")
+                #     comment_confirmed = False
 
                 logger.info("Go back to post view.")
                 device.back()
@@ -680,6 +689,8 @@ def _comment(
                 universal_actions._swipe_points(
                     direction=Direction.DOWN, delta_y=randint(150, 250)
                 )
+    else:
+        print("===IS CHECK LIMIT===")
     return False
 
 

@@ -120,6 +120,8 @@ class DeviceFacade:
         **kwargs,
     ):
         try:
+            #print(f" XMLCONTAIN: {self.deviceV2.dump_hierarchy()}")
+            #print(f"kwargs: {kwargs}\nindex: {index}")
             view = self.deviceV2(**kwargs)
             if index is not None and view.count > 1:
                 view = self.deviceV2(**kwargs)[index]
@@ -360,6 +362,10 @@ class DeviceFacade:
                 return self.viewV2.info["contentDescription"]
             except uiautomator2.JSONRPCError as e:
                 raise DeviceFacade.JsonRpcError(e)
+            
+        def get_xpath(self):
+            try:
+                return self.deviceV2.xpath()
 
         def child(self, *args, **kwargs):
             try:

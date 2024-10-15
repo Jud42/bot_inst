@@ -1106,6 +1106,7 @@ class AccountView:
             selector = self.device.find(resourceId=ResourceID.ACTION_BAR_TITLE_CHEVRON)
             selector.click()
             if self._find_username(username):
+                print("==find_username==")
                 if action_bar is not None:
                     current_profile_name = action_bar.get_text()
                     if current_profile_name.strip().upper() == username.upper():
@@ -1118,10 +1119,13 @@ class AccountView:
 
     def _find_username(self, username, has_scrolled=False):
         list_view = self.device.find(resourceId=ResourceID.LIST)
-        username_obj = self.device.find(
-            resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
-            textMatches=case_insensitive_re(username),
-        )
+        self.device.dump_hierarchy("./new_dump.xml")
+        # username_obj = self.device.find(
+        #     resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
+        #     textMatches=case_insensitive_re(username),
+        # )
+        username_obj = self.device.xpath(
+            '//android.view.ViewGroup[@content-desc="lilahy23, 4 follows"]')
         if username_obj.exists(Timeout.SHORT):
             logger.info(
                 f"Switching to {username}...",
@@ -1535,14 +1539,15 @@ class ProfileView(ActionBarView):
 
     def _new_ui_profile_button(self) -> bool:
         found = False
-        buttons = self.device.find(resourceIdMatches=ResourceID.TAB_BAR)
-        if not buttons.exists():
-            print(f"Button n'existe pas: Obj av for")
-        for button in buttons:
-            print(f"Button content check: Obj ap for=========: {button.get_desc()}")
-
-            if button.get_desc() == "Profile":
-                button.click()
+        self.device.dump_hierarchy("ui_data_analyse/dump.xml")
+        buttons = self.device.find(resourceId="com.instagram.android:id/profile_tab")
+        #if not buttons.exists():
+         #   print(f"_new_ui: check: Obj bef for")
+        #for button in buttons:
+        #    print(f"_new_ui: check: Obj ap for=========: {button.get_desc()}")
+        if buttons.exists():
+            if buttons.get_desc() == "Profile":
+                buttons.click()
                 found = True
         return found
 
@@ -1550,13 +1555,11 @@ class ProfileView(ActionBarView):
         found = False
         obj = self.device.find(resourceIdMatches=ResourceID.TAB_AVATAR)
         if obj.exists(Timeout.MEDIUM):
-            print(f"Button content : Obj exist=========: {obj.get_resource_id()}")
             obj.click()
             found = True
         return found
 
     def click_on_avatar(self):
-        print(vars(self))
         while True:
             if self._new_ui_profile_button():
                 break

@@ -21,7 +21,7 @@ debug: true
 # kill-atx-agent: false
 # restart-atx-agent: false
 # disable-block-detection: false
-# disable-filters: false
+disable-filters: false
 # dont-type: false
 # # scrape-to-file: scraped.txt
 # total-crashes-limit: 5
@@ -34,14 +34,14 @@ debug: true
 # ##############################################################################
 
 # ## Interaction (active jobs)
-#blogger-followers: neymarjr
-blogger-following: [ fentybeauty, boobamedia ]
+#blogger-followers: beyonce
+#blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-# blogger: [ username1, username2 ]
-#hashtag-likers-top: [ iot, atome ]
-#hashtag-likers-recent: [ iot, atome ]
-#hashtag-posts-top: [ smartfarm, devops ]
-# hashtag-posts-recent: [ hashtag1, hashtag2 ]
+blogger: neyo
+#hashtag-likers-top: [ spacex, esa ]
+#hashtag-likers-recent: [ spacex, esa ]
+#hashtag-posts-top: [ vanilla, coffee ]
+#hashtag-posts-recent: [ vanille, coffee ]
 # place-posts-top: [ place1, place2 ]
 # place-posts-recent: [ place1, place2 ]
 # place-likers-top: [ place1, place2 ]
@@ -51,8 +51,8 @@ blogger-following: [ fentybeauty, boobamedia ]
 # feed: 2-5 # is the number of likes you will give in feed
 
 # ## Special modifier for jobs and sources
-#watch-video-time: 15-35
-# watch-photo-time: 3-4
+watch-video-time: 15
+watch-photo-time: 3-4
 # # can-reinteract-after: 48 # the amount of hours that have to pass from the last interaction
 # delete-interacted-users: true
 
@@ -86,24 +86,23 @@ blogger-following: [ fentybeauty, boobamedia ]
 # # Source Limits
 # ##############################################################################
 
-interactions-count: 10
-likes-count: 5
+interactions-count: 2
+likes-count: 2
 likes-percentage: 100
-stories-count: 5
-stories-percentage: 100
-# carousel-count: 2-3
-# carousel-percentage: 60-70
-# max-comments-pro-user: 1-2
-# # comment-percentage: 30-40
+#stories-count: 5
+#stories-percentage: 100
+carousel-count: 2
+carousel-percentage: 100
+#max-comments-pro-user: 1-2
+comment-percentage: 100
 # # pm-percentage: 30-40
 interact-percentage: 100
 follow-percentage: 100
-follow-limit: 8
+follow-limit: 2
 # skipped-list-limit: 10-15
 # skipped-posts-limit: 5
 # fling-when-skipped: 0
 # min-following: 100
-
 # ##############################################################################
 # # Total Limits Per Session
 # ##############################################################################
@@ -114,7 +113,7 @@ follow-limit: 8
 # total-watches-limit: 120-150
 # total-successful-interactions-limit: 120-150
 # total-interactions-limit: 280-300
-# total-comments-limit: 3-5
+total-comments-limit: 10-20
 # total-pm-limit: 3-5
 # total-scraped-limit: 100-150
 
