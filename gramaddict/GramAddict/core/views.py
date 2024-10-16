@@ -1106,7 +1106,8 @@ class AccountView:
             selector = self.device.find(resourceId=ResourceID.ACTION_BAR_TITLE_CHEVRON)
             selector.click()
             if self._find_username(username):
-                print("==find_username==")
+                AccountView.navigate_to_main_account(self)
+                action_bar = ProfileView._getActionBarTitleBtn(self)
                 if action_bar is not None:
                     current_profile_name = action_bar.get_text()
                     if current_profile_name.strip().upper() == username.upper():
@@ -1119,13 +1120,12 @@ class AccountView:
 
     def _find_username(self, username, has_scrolled=False):
         list_view = self.device.find(resourceId=ResourceID.LIST)
-        self.device.dump_hierarchy("./new_dump.xml")
+        # self.device.dump_hierarchy("./new_dump.xml")
         # username_obj = self.device.find(
         #     resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
         #     textMatches=case_insensitive_re(username),
         # )
-        username_obj = self.device.xpath(
-            '//android.view.ViewGroup[@content-desc="lilahy23, 4 follows"]')
+        username_obj = self.device.find(descriptionContains=username)
         if username_obj.exists(Timeout.SHORT):
             logger.info(
                 f"Switching to {username}...",

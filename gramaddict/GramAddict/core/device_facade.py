@@ -362,10 +362,6 @@ class DeviceFacade:
                 return self.viewV2.info["contentDescription"]
             except uiautomator2.JSONRPCError as e:
                 raise DeviceFacade.JsonRpcError(e)
-            
-        def get_xpath(self):
-            try:
-                return self.deviceV2.xpath()
 
         def child(self, *args, **kwargs):
             try:
