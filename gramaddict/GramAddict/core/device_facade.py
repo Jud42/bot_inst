@@ -726,9 +726,9 @@ class DeviceFacade:
 
                     typed_text = self.viewV2.get_text()
                     if typed_text != text:
-                        logger.warning(
-                            "Failed to write in text field, let's try in the old way.."
-                        )
+                        #logger.warning(
+                        #    "Failed to write in text field, let's try in the old way.."
+                        #)
                         self.viewV2.set_text(text)
                     else:
                         logger.debug(

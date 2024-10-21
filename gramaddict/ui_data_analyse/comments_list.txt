@@ -1,0 +1,8 @@
+%PHOTO
+nice picture !
+
+%VIDEO
+nice video !
+
+%CAROUSEL
+nice 🙂

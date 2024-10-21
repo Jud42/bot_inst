@@ -19,17 +19,40 @@ logger = logging.getLogger(__name__)
 def check_if_english(device):
     """check if app is in English"""
     logger.debug("Checking if app is in English..")
-    post, follower, following = ProfileView(device)._getSomeText()
-    if None in {post, follower, following}:
-        logger.warning(
-            "Failed to check your Instagram language. Be sure to set it to English or the bot won't work!"
-        )
-    elif post == "posts" and follower == "followers" and following == "following":
-        logger.debug("Instagram in English.")
-    else:
-        logger.error("Please change the language manually to English!")
-        sys.exit(1)
-    return ProfileView(device, is_own_profile=True)
+
+    while True:
+        log_in = device.find(descriptionContains="Log in")
+        home_view = device.find(resourceId="com.instagram.android:id/username")
+
+        if log_in.exists():
+            logger.debug("From Log in Page..")
+            english = device.find(textContains="English")
+            logger.debug("Instagram in English.") if english.exists() else sys.exit(1)
+            break
+        elif home_view.exists():
+            logger.debug("From Home Page..")
+            if home_view.get_text() == "Your story":
+                logger.debug("Instagram in English.")
+                break
+            else:
+                logger.error("Please change the language manually to English!")
+                sys.exit(1)
+                
+            #post, follower, following = ProfileView(device)._getSomeText()
+            # if None in {post, follower, following}:
+            #     logger.warning(
+            #         "Failed to check your Instagram language. Be sure to set it to English or the bot won't work!"
+            #     )
+            # elif post == "posts" and follower == "followers" and following == "following":
+            #     logger.debug("Instagram in English.")
+            #     break
+        else:
+            logger.warning(
+                    "Failed to check your Instagram language. Be sure to set it to English or the bot won't work or the UI is still loading!"
+                )
+                
+
+    #return ProfileView(device, is_own_profile=True)
 
 
 def nav_to_blogger(device, username, current_job):

@@ -250,6 +250,9 @@ def open_instagram(device):
         return False
     else:
         logger.debug("Instagram called successfully.")
+        random_sleep(3, 3, modulable=False)
+        device.dump_hierarchy("ui_data_analyse/dump.xml")
+
 
     max_tries = 3
     n = 0
