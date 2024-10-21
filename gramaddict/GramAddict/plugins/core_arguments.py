@@ -19,9 +19,16 @@ class CoreArguments(Plugin):
             },
             {
                 "arg": "--username",
-                "nargs": None,
+                "nargs": "*",
                 "help": "username of the instagram account being used",
                 "metavar": "justinbieber",
+                "default": None,
+            },
+            {
+                "arg": "--password",
+                "nargs": "*",
+                "help": "password of the instagram account being used",
+                "metavar": "justinbieberpassword",
                 "default": None,
             },
             {

@@ -31,6 +31,7 @@ class Config:
         self.app_id: Optional[str] = None
         self.first_run = first_run
         self.username = False
+        self.password = False
 
         # Pre-Load Variables Needed for Script Init
         if self.module:
@@ -71,6 +72,7 @@ class Config:
                 exit(2)
 
             self.username = self.config.get("username", False)
+            self.password = self.config.get("password", False)
             self.debug = self.config.get("debug", False)
             self.app_id = self.config.get("app_id", "com.instagram.android")
         else:

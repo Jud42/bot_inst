@@ -147,13 +147,10 @@ def main() -> None:
             kwargs.pop("args", None)
             kwargs.pop("run", None)
             sp.add_argument(*args, **kwargs)
-
     args = parser.parse_args()
-
     if args.subparser:
         actions[args.subparser](args)
         return
-
     parser.print_help()
 
 

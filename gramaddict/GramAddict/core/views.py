@@ -1084,14 +1084,56 @@ class AccountView:
             logger.error("Not able to set your app in English! Do it by yourself!")
             exit(0)
 
+    def navigateToLogIn(self, username, password):
+        logger.info("Check Log in Page ...")
+        random_sleep(2, 3, modulable=False)
+        #device.dump_hierarchy("./question_log_in.xml")
+        log_in_question = self.device.find(text="Do you have an account?")
+        self.device.find(descriptionContains="Close").click() if log_in_question.exists() else None
+        random_sleep(2, 3, modulable=False) if log_in_question.exists() else None
+        log_in = self.device.find(descriptionContains="Log in", clickable="true")
+        if log_in.exists() and (username and password is not None):
+            logger.info("Log In page found !")
+            random_sleep(2, 3, modulable=False)
+            username_field = self.device.find(text="Username, email or mobile number")
+            password_field = self.device.find(text="Password")
+            if username_field.exists() and password_field.exists():
+                logger.info("Entering user's username and password")
+                username_field.set_text(username, Mode.TYPE)
+                password_field.set_text(password, Mode.TYPE)
+                log_in.click()
+                random_sleep(2, 3, modulable=False)
+                return True
+            else:
+                logger.error("Username & Passowrd fields not found within Log In Element")
+                return "Error"
+        elif log_in.exists():
+            logger.info("Log In page found !")
+            logger.error("you need to specify the username and password in config.yml!")
+            return "Error"
+            #exit(1)
+        logger.info("Log In page not found !")
+        return False
+        # if no conditions are met the function return None implicitly
+
     def navigate_to_main_account(self):
+        
+        # if cookies page appears
+        cookies_elem = self.device.find(descriptionContains="Decline optional cookies")
+        cookies_elem.click() if cookies_elem.exists() else None
+        random_sleep(2, 3, modulable=False)
+        
         logger.debug("Navigating to main account...")
         profile_view = ProfileView(self.device)
         profile_view.click_on_avatar()
+        random_sleep(2, 3, modulable=False)
         if profile_view.getFollowingCount() is None:
             profile_view.click_on_avatar()
+            random_sleep(2, 3, modulable=False)
 
-    def changeToUsername(self, username: str):
+
+    def changeToUsername(self, username: str, password: str):
+        #print(f"**{username}**")
         action_bar = ProfileView._getActionBarTitleBtn(self)
         if action_bar is not None:
             current_profile_name = action_bar.get_text()
@@ -1105,6 +1147,8 @@ class AccountView:
             logger.debug(f"You're logged as {current_profile_name.strip()}")
             selector = self.device.find(resourceId=ResourceID.ACTION_BAR_TITLE_CHEVRON)
             selector.click()
+            random_sleep(1, 2, modulable=False)
+            add_insta_account = self.device.find(descriptionContains="Add Instagram account")
             if self._find_username(username):
                 AccountView.navigate_to_main_account(self)
                 action_bar = ProfileView._getActionBarTitleBtn(self)
@@ -1116,6 +1160,14 @@ class AccountView:
                     logger.error(
                         "Cannot find action bar (where you select your account)!"
                     )
+            elif add_insta_account.exists():
+                add_insta_account.click()
+                random_sleep(2, 3, modulable=False)
+                self.device.find(descriptionContains="Log into existing account").click()
+                random_sleep(2, 3, modulable=False)
+                if self.navigateToLogIn(username, password):
+                    self.navigate_to_main_account()
+                    return True
         return False
 
     def _find_username(self, username, has_scrolled=False):
@@ -1539,7 +1591,6 @@ class ProfileView(ActionBarView):
 
     def _new_ui_profile_button(self) -> bool:
         found = False
-        self.device.dump_hierarchy("ui_data_analyse/dump.xml")
         buttons = self.device.find(resourceId="com.instagram.android:id/profile_tab")
         #if not buttons.exists():
          #   print(f"_new_ui: check: Obj bef for")
@@ -1565,7 +1616,8 @@ class ProfileView(ActionBarView):
                 break
             if self._old_ui_profile_button():
                 break
-            self.device.back()
+            if not self.device.find(descriptionContains="Log in"):
+                self.device.back()
 
     def getFollowButton(self):
         button_regex = f"{ClassName.BUTTON}|{ClassName.TEXT_VIEW}"

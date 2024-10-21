@@ -7,8 +7,9 @@
 ##############################################################################
 # General Configuration
 ##############################################################################
-
-username: lilahy23 # you have to put your IG name here!
+username: [izy23_11, lilahy23]
+password: [Izy2311m0tdep@sse, Lilahy23m0tdep@sse]
+#username: [lilahy23, izy23_11] # you have to put your IG name here!
 # device: put_your_device_id_there # 'adb devices' in the console to know it.  It's needed only if you have more than 1 device connected
 app-id: com.instagram.android
 use-cloned-app: false
@@ -37,7 +38,7 @@ disable-filters: false
 #blogger-followers: beyonce
 #blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-blogger: neyo
+blogger: [travisscott, alexpoatanpereira]
 #hashtag-likers-top: [ spacex, esa ]
 #hashtag-likers-recent: [ spacex, esa ]
 #hashtag-posts-top: [ vanilla, coffee ]
