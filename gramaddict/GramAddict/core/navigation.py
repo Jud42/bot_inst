@@ -31,7 +31,7 @@ def check_if_english(device):
             break
         elif home_view.exists():
             logger.debug("From Home Page..")
-            if home_view.get_text() == "Your story":
+            if "story" in home_view.get_text():
                 logger.debug("Instagram in English.")
                 break
             else:
