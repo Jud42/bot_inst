@@ -20,9 +20,9 @@ case "$1" in
     --up)
         echo "Starting Docker containers..."
         sudo docker compose up -d
-	echo "restart adb server..."
-	adb kill-server &>/dev/null
-	adb -a daemon server start &>/dev/null &
+	    echo "restart adb server..."
+	    adb kill-server 2>&1 /dev/null
+	    adb -a nodaemon server start &>/dev/null &
         ;;
     --down)
         echo "Stopping and removing Docker containers..."
