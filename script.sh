@@ -21,8 +21,8 @@ case "$1" in
         echo "Starting Docker containers..."
         sudo docker compose up -d
 	    echo "restart adb server..."
-	    adb kill-server 2>&1 /dev/null
-	    adb -a nodaemon server start &>/dev/null &
+	    adb kill-server > /dev/null 2>&1
+	    adb -a server start &>/dev/null
         ;;
     --down)
         echo "Stopping and removing Docker containers..."
