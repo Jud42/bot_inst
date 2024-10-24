@@ -2,6 +2,8 @@ import datetime
 import logging
 import re
 import platform
+import time
+import sys
 from enum import Enum, auto
 from random import choice, randint, uniform
 from time import sleep
@@ -1085,7 +1087,7 @@ class AccountView:
             exit(0)
 
     def navigateToLogIn(self, username, password):
-        logger.info("Check Log in Page ...")
+        logger.debug("Check Log in Page ...")
         random_sleep(2, 3, modulable=False)
         #device.dump_hierarchy("./question_log_in.xml")
         log_in_question = self.device.find(text="Do you have an account?")
@@ -1093,12 +1095,12 @@ class AccountView:
         random_sleep(2, 3, modulable=False) if log_in_question.exists() else None
         log_in = self.device.find(descriptionContains="Log in", clickable="true")
         if log_in.exists() and (username and password is not None):
-            logger.info("Log In page found !")
+            logger.debug("Log in page found !")
             random_sleep(2, 3, modulable=False)
             username_field = self.device.find(text="Username, email or mobile number")
             password_field = self.device.find(text="Password")
             if username_field.exists() and password_field.exists():
-                logger.info("Entering user's username and password")
+                logger.debug("Entering user's username and password")
                 username_field.set_text(username, Mode.TYPE)
                 password_field.set_text(password, Mode.TYPE)
                 log_in.click()
@@ -1108,11 +1110,11 @@ class AccountView:
                 logger.error("Username & Passowrd fields not found within Log In Element")
                 return "Error"
         elif log_in.exists():
-            logger.info("Log In page found !")
+            logger.dubug("Log in page found !")
             logger.error("you need to specify the username and password in config.yml!")
             return "Error"
             #exit(1)
-        logger.info("Log In page not found !")
+        logger.debug("Log in page not found !")
         return False
         # if no conditions are met the function return None implicitly
 
@@ -1149,7 +1151,8 @@ class AccountView:
             selector.click()
             random_sleep(1, 2, modulable=False)
             add_insta_account = self.device.find(descriptionContains="Add Instagram account")
-            if self._find_username(username):
+            # case: account found, still login
+            if self._find_username(username, None):
                 AccountView.navigate_to_main_account(self)
                 action_bar = ProfileView._getActionBarTitleBtn(self)
                 if action_bar is not None:
@@ -1165,25 +1168,46 @@ class AccountView:
                 random_sleep(2, 3, modulable=False)
                 self.device.find(descriptionContains="Log into existing account").click()
                 random_sleep(2, 3, modulable=False)
-                if self.navigateToLogIn(username, password):
+                log_in_another_account = self.device.find(descriptionContains="Log into another account")
+                if log_in_another_account.exists():
+                    # case: account found, logout
+                    if self._find_username(username, password):
+                        self.navigate_to_main_account()
+                    else:
+                        # case: account not found, back to log in
+                        log_in_another_account.click()
+                        random_sleep(2, 3, modulable=False)
+                        if self.navigateToLogIn(username, password):
+                            self.navigate_to_main_account()
+                    return True
+                elif self.navigateToLogIn(username, password):
                     self.navigate_to_main_account()
                     return True
         return False
 
-    def _find_username(self, username, has_scrolled=False):
+    def _find_username(self, username, password, has_scrolled=False):
         list_view = self.device.find(resourceId=ResourceID.LIST)
         # self.device.dump_hierarchy("./new_dump.xml")
         # username_obj = self.device.find(
         #     resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
         #     textMatches=case_insensitive_re(username),
         # )
-        username_obj = self.device.find(descriptionContains=username)
-        if username_obj.exists(Timeout.SHORT):
+        user = self.device.find(descriptionContains=username)
+        if user.exists(Timeout.SHORT):
+            user.click()
+            random_sleep(2, 3, modulable=False)
+            # case: Account found but need password for the login
+            log_in = self.device.find(descriptionContains="Log in", clickable="true")
+            password_field = self.device.find(text="Password")
+            if (log_in.exists() and password_field) and (username and password is not None):
+                logger.debug(f"Entering password for: {username} !")
+                password_field.set_text(password, Mode.TYPE)
+                log_in.click()
+                random_sleep(2, 3, modulable=False)
             logger.info(
                 f"Switching to {username}...",
                 extra={"color": f"{Style.BRIGHT}{Fore.BLUE}"},
             )
-            username_obj.click()
             return True
         elif list_view.is_scrollable() and not has_scrolled:
             logger.debug("User list is scrollable.")
@@ -1611,6 +1635,7 @@ class ProfileView(ActionBarView):
         return found
 
     def click_on_avatar(self):
+        start_time = time.time()
         while True:
             if self._new_ui_profile_button():
                 break
@@ -1618,6 +1643,12 @@ class ProfileView(ActionBarView):
                 break
             if not self.device.find(descriptionContains="Log in"):
                 self.device.back()
+            
+            # limit 
+            elapsed_time = time.time() - start_time
+            if elapsed_time > 120:
+                logger.debug("Error: Operation took more than 2 minutes. Exiting the program.")
+                sys.exit(1)
 
     def getFollowButton(self):
         button_regex = f"{ClassName.BUTTON}|{ClassName.TEXT_VIEW}"
