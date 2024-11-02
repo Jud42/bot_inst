@@ -183,7 +183,8 @@ class InteractHashtagLikers(Plugin):
             skipped_list_limit=skipped_list_limit,
             skipped_fling_limit=skipped_fling_limit,
         )
-
+        
+        print(f"***AVANT HANDLE LIKERS*** : {self.args.interactions_count}")
         handle_likers(
             self,
             device,
@@ -197,3 +198,4 @@ class InteractHashtagLikers(Plugin):
             interaction,
             is_follow_limit_reached,
         )
+        print("***APRES HANDLE LIKERS***")

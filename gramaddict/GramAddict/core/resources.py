@@ -25,6 +25,9 @@ class ResourceID:
         self.CAROUSEL_IMAGE = f"{APP_ID}:id/carousel_image"
         self.CAROUSEL_IMAGE_MEDIA_GROUP = f"{APP_ID}:id/carousel_image_media_group"
         self.CAROUSEL_VIDEO_MEDIA_GROUP = f"{APP_ID}:id/carousel_video_media_group"
+
+        self.CAROUSEL_VIDEO_IMAGE = f"{APP_ID}:id/carousel_video_image"
+        
         self.CAROUSEL_INDEX_INDICATOR_TEXT_VIEW = (
             f"{APP_ID}:id/carousel_index_indicator_text_view"
         )
@@ -76,6 +79,9 @@ class ResourceID:
         self.NEW_FEED_PILL = f"{APP_ID}:id/new_feed_pill"
         self.NETEGO_CAROUSEL_HEADER = f"{APP_ID}:id/netego_carousel_header"
         self.NOTIFICATION_MESSAGE = f"{APP_ID}:id/notification_message"
+
+        self.NOTIFICATIONICONS = "com.android.systemui:id/notificationIcons"
+
         self.PRIMARY_BUTTON = f"{APP_ID}:id/primary_button"
         self.PRIVATE_PROFILE_EMPTY_STATE = f"{APP_ID}:id/private_profile_empty_state"
         self.PROFILE_HEADER_BIO_TEXT = f"{APP_ID}:id/profile_header_bio_text"
@@ -85,6 +91,11 @@ class ResourceID:
         self.PROFILE_HEADER_FOLLOW_CONTEXT_TEXT = (
             f"{APP_ID}:id/profile_header_follow_context_text"
         )
+
+        self.PROFILE_HEADER_FOLLOW_BUTTON = (
+            f"{APP_ID}:id/profile_header_follow_button"
+        )
+
         self.PROFILE_HEADER_FULL_NAME = f"{APP_ID}:id/profile_header_full_name"
         self.PROFILE_HEADER_WEBSITE = f"{APP_ID}:id/profile_header_website"
         self.PROFILE_HEADER_AVATAR_CONTAINER_TOP_LEFT_STUB = (
@@ -114,6 +125,7 @@ class ResourceID:
         self.ROW_FEED_LIKE_COUNT_FACEPILE_STUB = (
             f"{APP_ID}:id/row_feed_like_count_facepile_stub"
         )
+        self.ROW_FEED_PHOTO_PROFILE_IMAGEVIEW = f"{APP_ID}:id/row_feed_photo_profile_imageview"
         self.ROW_FEED_PHOTO_PROFILE_NAME = f"{APP_ID}:id/row_feed_photo_profile_name"
         self.ROW_FEED_TEXTVIEW_LIKES = f"{APP_ID}:id/row_feed_textview_likes"
         self.ROW_FEED_VIEW_GROUP_BUTTONS = f"{APP_ID}:id/row_feed_view_group_buttons"
@@ -191,8 +203,10 @@ class ResourceID:
         self.VIDEO_CONTAINER_AND_CLIPS_VIDEO_CONTAINER = (
             f"{self.VIDEO_CONTAINER}|{self.CLIPS_VIDEO_CONTAINER}"
         )
-        self.CAROUSEL_AND_MEDIA_GROUP = f"{self.CAROUSEL_IMAGE}|{self.MEDIA_GROUP}|{self.CAROUSEL_IMAGE_MEDIA_GROUP}|{self.CAROUSEL_VIDEO_MEDIA_GROUP}"
-        self.MEDIA_CONTAINER = f"{self.ZOOMABLE_VIEW_CONTAINER}|{self.CAROUSEL_MEDIA_GROUP}|{self.SPONSORED_CONTENT_SERVER_RENDERED_ROOT}|{self.COLLECTION_ROOT_VIEW}|{self.MEDIA_CONTENT_LOCATION}"
+        
+        self.CAROUSEL_AND_MEDIA_GROUP = f"{self.CAROUSEL_IMAGE}|{self.CAROUSEL_VIDEO_MEDIA_GROUP}|{self.CAROUSEL_VIDEO_IMAGE}|{self.CAROUSEL_MEDIA_GROUP}|{self.CAROUSEL_IMAGE_MEDIA_GROUP}"
+        
+        self.MEDIA_CONTAINER = f"{self.ZOOMABLE_VIEW_CONTAINER}|{self.CAROUSEL_MEDIA_GROUP}|{self.SPONSORED_CONTENT_SERVER_RENDERED_ROOT}|{self.COLLECTION_ROOT_VIEW}|{self.MEDIA_CONTENT_LOCATION}|{self.MEDIA_GROUP}"
         self.GAP_VIEW_AND_FOOTER_SPACE = f"{self.GAP_VIEW}|{self.FOOTER_SPACE}"
         self.BLOCK_POPUP = f"{self.DIALOG_CONTAINER}|{self.DIALOG_ROOT_VIEW}"
 
@@ -243,3 +257,5 @@ class ClassName:
     VIEW = "android.view.View"
     VIEW_GROUP = "android.view.ViewGroup"
     VIEW_PAGER = "androidx.viewpager.widget.ViewPager"
+    
+    TEXTVIEW_IGTEXTLAYOUTVIEW = "com.instagram.ui.widget.textview.IgTextLayoutView"

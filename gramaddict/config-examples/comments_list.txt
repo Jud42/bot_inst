@@ -1,15 +1,8 @@
 %PHOTO
-comment 1 for photo
-comment 2 for photo
-...
-comment n for photo
+Nice Picture
+
 %VIDEO
-comment 1 for video
-comment 2 for video
-...
-comment n for video
+Nice video
+
 %CAROUSEL
-comment 1 for carousel
-comment 2 for carousel
-...
-comment n for carousel
+Nice

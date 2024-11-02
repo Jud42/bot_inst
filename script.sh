@@ -1,6 +1,7 @@
 #!/bin/sh
 
 container_name="adb-client"
+config_file="conditionnement.yml"
 
 # Function to display the help message
 show_help() {
@@ -34,7 +35,7 @@ case "$1" in
         ;;
     --run)
         echo "Running the Python script inside the container..."
-        sudo docker exec -it ${container_name} python3 run.py --config config-examples/config.yml
+        sudo docker exec -it ${container_name} python3 run.py --config config-examples/${config_file}
         ;;
     --help|*)
         show_help

@@ -9,7 +9,6 @@
 ##############################################################################
 username: [izy23_11, lilahy23]
 password: [Izy2311m0tdep@sse, Lilahy23m0tdep@sse]
-#username: [lilahy23, izy23_11] # you have to put your IG name here!
 # device: put_your_device_id_there # 'adb devices' in the console to know it.  It's needed only if you have more than 1 device connected
 app-id: com.instagram.android
 use-cloned-app: false
@@ -21,7 +20,7 @@ debug: true
 # close-apps: false
 # kill-atx-agent: false
 # restart-atx-agent: false
-# disable-block-detection: false
+disable-block-detection: false
 disable-filters: false
 # dont-type: false
 # # scrape-to-file: scraped.txt
@@ -35,24 +34,24 @@ disable-filters: false
 # ##############################################################################
 
 # ## Interaction (active jobs)
-#blogger-followers: beyonce
+# blogger-followers: beyonce
 #blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-#blogger: [travisscott, alexpoatanpereira]
-#hashtag-likers-top: [ spacex, esa ]
+#blogger: redmanoficial
+#hashtag-likers-top: [ spacex ]
 #hashtag-likers-recent: [ spacex, esa ]
-hashtag-posts-top: [ spacex ]
+hashtag-posts-top: [ neurolink, starlink ]
 #hashtag-posts-recent: [ vanille, coffee ]
-# place-posts-top: [ place1, place2 ]
+#place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]
-# place-likers-top: [ place1, place2 ]
+#place-likers-top: [ switzerland, france ]
 # place-likers-recent: [ place1, place2 ]
 # interact-from-file: [usernames1.txt 10-15, usernames2.txt 3]
 # posts-from-file: posts.txt
 # feed: 2-5 # is the number of likes you will give in feed
 
 # ## Special modifier for jobs and sources
-watch-video-time: 15
+watch-video-time: 6-8
 watch-photo-time: 3-4
 can-reinteract-after: 0 # the amount of hours that have to pass from the last interaction
 # delete-interacted-users: true
@@ -87,19 +86,19 @@ can-reinteract-after: 0 # the amount of hours that have to pass from the last in
 # # Source Limits
 # ##############################################################################
 
-#interactions-count: 2
-likes-count: 2
+interactions-count: 3 # for blogger: following,followers,post-likers (nb account you wish to interact)
+likes-count: 3
 likes-percentage: 100
 #stories-count: 5
 #stories-percentage: 100
-carousel-count: 2
-carousel-percentage: 100
-#max-comments-pro-user: 1-2
+#carousel-count: 2
+#carousel-percentage: 100
+##max-comments-pro-user: 1-2
 comment-percentage: 100
 # # pm-percentage: 30-40
 interact-percentage: 100
-follow-percentage: 100
-follow-limit: 2
+#follow-percentage: 100
+#follow-limit: 2
 # skipped-list-limit: 10-15
 # skipped-posts-limit: 5
 # fling-when-skipped: 0
@@ -114,7 +113,7 @@ follow-limit: 2
 # total-watches-limit: 120-150
 # total-successful-interactions-limit: 120-150
 # total-interactions-limit: 280-300
-total-comments-limit: 10-20
+# total-comments-limit: 10-20
 # total-pm-limit: 3-5
 # total-scraped-limit: 100-150
 

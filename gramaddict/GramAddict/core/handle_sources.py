@@ -308,10 +308,14 @@ def handle_likers(
     nr_same_post = 0
     nr_same_posts_max = 3
     while True:
+        print("== Within loop in HANDLE_LIKERS Function ==")
         flag, post_description, _, _, _, _ = PostsViewList(device)._check_if_last_post(
             post_description, current_job
         )
         has_likers, number_of_likers = PostsViewList(device)._find_likers_container()
+        print(f"has_likers: {has_likers}\nnumber of likers = {number_of_likers}")
+        print("== Within loop in HANDLE_LIKERS Function after _find_likers_container ==")
+
         if flag:
             nr_same_post += 1
             logger.info(f"Warning: {nr_same_post}/{nr_same_posts_max} repeated posts.")
@@ -512,6 +516,7 @@ def handle_posts(
     post_view_list = PostsViewList(device)
     opened_post_view = OpenedPostView(device)
     while True:
+        print("== JE SUIS HANDLE_POSTS ==")
         (
             is_same_post,
             post_description,
@@ -520,8 +525,10 @@ def handle_posts(
             is_hashtag,
             has_tags,
         ) = post_view_list._check_if_last_post(post_description, current_job)
+        print("== HANDLE_POSTS je sors de _check_if_last_post ==")
         has_likers, number_of_likers = post_view_list._find_likers_container()
         already_liked, _ = opened_post_view._is_post_liked()
+        print("== HANDLE_POSTS CLOSE COMMENT ==")
         if not (is_ad or is_hashtag):
             if already_liked_count == already_liked_count_limit:
                 logger.info(
@@ -546,6 +553,7 @@ def handle_posts(
                 )
                 already_liked_count += 1
             elif random_choice(interact_percentage):
+                print("===POST STILL NOT LIKED===")
                 can_interact = False
                 if storage.is_user_in_blacklist(username):
                     logger.info(f"@{username} is in blacklist. Skip.")
@@ -581,7 +589,7 @@ def handle_posts(
                         f"Reached the limit of already interacted {skipped_posts_limit}. Going to the next source/job!"
                     )
                     break
-                if can_interact and (likes_in_range or not has_likers):
+                if can_interact and username: #and (likes_in_range or not has_likers):
                     logger.info(
                         f"@{username}: interact", extra={"color": f"{Fore.YELLOW}"}
                     )
@@ -591,8 +599,10 @@ def handle_posts(
                             limit_type=session_state.Limit.LIKES, output=True
                         ):
                             if has_tags:
+                                print("==_like_in_post single click: if has_tags")
                                 post_view_list._like_in_post_view(LikeMode.SINGLE_CLICK)
                             else:
+                                print("==_like_in_post double click: else")
                                 post_view_list._like_in_post_view(LikeMode.DOUBLE_CLICK)
                             UniversalActions.detect_block(device)
                             liked = post_view_list._check_if_liked()
@@ -628,24 +638,24 @@ def handle_posts(
                                         break
                             else:
                                 likes_failed += 1
-                    if current_job != "feed":
-                        opened, _, _ = post_view_list._post_owner(
-                            current_job, Owner.OPEN, username
-                        )
-                        if opened:
-                            if not interact(
-                                storage=storage,
-                                is_follow_limit_reached=is_follow_limit_reached,
-                                username=username,
-                                interaction=interaction,
-                                device=device,
-                                session_state=session_state,
-                                current_job=current_job,
-                                target=target,
-                                on_interaction=on_interaction,
-                            ):
-                                break
-                            device.back()
+                    # if current_job != "feed":
+                    #     opened, _, _ = post_view_list._post_owner(
+                    #         current_job, Owner.OPEN, username
+                    #     )
+                    #     if opened:
+                    #         if not interact(
+                    #             storage=storage,
+                    #             is_follow_limit_reached=is_follow_limit_reached,
+                    #             username=username,
+                    #             interaction=interaction,
+                    #             device=device,
+                    #             session_state=session_state,
+                    #             current_job=current_job,
+                    #             target=target,
+                    #             on_interaction=on_interaction,
+                    #         ):
+                    #             break
+                    #         device.back()
             else:
                 logger.info(
                     f"Skipped because your interact % is {interact_percentage}/100 and {username}'s post was unlucky!"
@@ -653,7 +663,7 @@ def handle_posts(
         if likes_failed == 10:
             logger.warning("You failed to do 10 likes! Soft-ban?!")
             return
-        post_view_list.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
+        #post_view_list.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
         post_view_list.swipe_to_fit_posts(SwipeTo.NEXT_POST)
     TabBarView(device).navigateToProfile()
 
