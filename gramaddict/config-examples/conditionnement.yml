@@ -37,11 +37,11 @@ disable-filters: false
 # blogger-followers: beyonce
 #blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-#blogger: redmanoficial
-#hashtag-likers-top: [ spacex ]
-#hashtag-likers-recent: [ spacex, esa ]
-hashtag-posts-top: [ neurolink, starlink ]
-#hashtag-posts-recent: [ vanille, coffee ]
+blogger: nickiminaj
+#hashtag-likers-top: [ jordan, puma ]
+#hashtag-likers-recent: [ jordan, puma ]
+#hashtag-posts-top: [ jordan, puma ]
+#hashtag-posts-recent: [ jordan, puma ]
 #place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]
 #place-likers-top: [ switzerland, france ]
@@ -113,7 +113,7 @@ interact-percentage: 100
 # total-watches-limit: 120-150
 # total-successful-interactions-limit: 120-150
 # total-interactions-limit: 280-300
-# total-comments-limit: 10-20
+total-comments-limit: 10-20
 # total-pm-limit: 3-5
 # total-scraped-limit: 100-150
 

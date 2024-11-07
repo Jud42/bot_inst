@@ -411,7 +411,6 @@ class SearchView:
             target,
             Mode.PASTE if args.dont_type else Mode.TYPE,
         )
-        print(f"_navigate_to_target() _check_current_view() ** Bug **")
         if self._check_current_view(target, job):
             logger.info(f"{target} is in top view.")
             return True
@@ -452,6 +451,7 @@ class SearchView:
                 resourceIdMatches=ResourceID.SEARCH_ROW_ITEM,
             )
         if obj.exists():
+            self.device.dump_hierarchy("ui_data_analyse/searchRow.xml")
             obj.click()
             return True
         return False
@@ -745,7 +745,6 @@ class PostsViewList:
         )
         has_tags = self._has_tags()
         while True:
-            self.device.dump_hierarchy("./postsView.xml")
             """
             post_description = self.device.find(
                 index=-1,
@@ -1385,7 +1384,7 @@ class OpenedPostView:
         self.has_tags = False
 
     def _get_post_like_button(self) -> Optional[DeviceFacade.View]:
-        logger.debug("== _get_post_like_button() ==")
+        logger.debug("_get_post_like_button()")
         like_button = self.device.find(
                     resourceIdMatches=ResourceID.ROW_FEED_BUTTON_LIKE
                 )
@@ -1419,10 +1418,10 @@ class OpenedPostView:
         :rtype: bool
         """
         like_btn_view = self._get_post_like_button()
-        if not like_btn_view:
+        if not like_btn_view.exists():
             return False, None
-
-        return like_btn_view.get_selected(), like_btn_view
+        else: 
+            return like_btn_view.get_selected(), like_btn_view
 
     def like_post(self) -> bool:
         """
@@ -1441,7 +1440,7 @@ class OpenedPostView:
                     "Post has tags, better going with a single click on the little heart ❤️."
                 )
                 like_button = self._get_post_like_button()
-                if like_button is not None:
+                if like_button.exists():
                     like_button.click()
                     liked, _ = self._is_post_liked()
                 else:
@@ -1652,6 +1651,12 @@ class PostsGridView:
         if not post_view.exists():
             return None, None, None
         content_desc = post_view.ui_info()["contentDescription"]
+        while not content_desc:
+            if post_view.child().exists():
+                post_view = post_view.child()
+                content_desc = post_view.ui_info()["contentDescription"]
+            else:
+                break
         media_type, obj_count = PostsViewList.detect_media_type(content_desc)
         post_view.click()
 
@@ -1807,8 +1812,6 @@ class ProfileView(ActionBarView):
 
     def getMutualFriends(self) -> int:
         logger.debug("Looking for mutual friends tab.")
-        self.device.dump_hierarchy("./mutualFriends.xml")
-        
         # follow_context = self.device.find(
         #     resourceIdMatches=ResourceID.PROFILE_HEADER_FOLLOW_CONTEXT_TEXT
         # )

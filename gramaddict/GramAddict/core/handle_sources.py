@@ -304,6 +304,7 @@ def handle_likers(
         and not nav_to_hashtag_or_place(device, target, current_job)
     ):
         return False
+    
     post_description = ""
     nr_same_post = 0
     nr_same_posts_max = 3

@@ -84,6 +84,7 @@ def nav_to_blogger(device, username, current_job):
 
 
 def nav_to_hashtag_or_place(device, target, current_job):
+    logger.debug("nav_to_hashtag_or_place()")
     """navigate to hashtag/place/feed list"""
     search_view = TabBarView(device).navigateToSearch()
     if not search_view.navigate_to_target(target, current_job):
@@ -118,6 +119,7 @@ def nav_to_hashtag_or_place(device, target, current_job):
 
 
 def nav_to_post_likers(device, username, my_username):
+    logger.debug("nav_to_post_likers()")
     """navigate to blogger post likers"""
     if username == my_username:
         TabBarView(device).navigateToProfile()

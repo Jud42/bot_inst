@@ -180,6 +180,11 @@ class Filter:
 
     def is_num_likers_in_range(self, likes_on_post: str) -> bool:
         if self.conditions is not None and likes_on_post is not None:
+            if any(char.isalpha() for char in likes_on_post):
+                if likes_on_post.endswith('K'):
+                    likes_on_post = float(likes_on_post[:-1]) * 1_000
+                elif likes_on_post.endswith('M'):
+                    likes_on_post = float(likes_on_post[:-1]) * 1_000_000
             if likes_on_post == -1:
                 logger.debug("We don't know how many likers this post has.")
                 return True

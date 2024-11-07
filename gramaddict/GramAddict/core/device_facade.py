@@ -369,6 +369,13 @@ class DeviceFacade:
             except uiautomator2.JSONRPCError as e:
                 raise DeviceFacade.JsonRpcError(e)
             return DeviceFacade.View(view=view, device=self.deviceV2)
+        
+        def child_by_instance(self, index):
+            try:
+                view = self.viewV2.child_by_instance(index)
+            except uiautomator2.JSONRPCError as e:
+                raise DeviceFacade.JsonRpcError(e)
+            return DeviceFacade.View(view=view, device=self.deviceV2)
 
         def sibling(self, *args, **kwargs):
             try:

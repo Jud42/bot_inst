@@ -280,6 +280,7 @@ def interact_with_user(
                 logger.info("Post already liked!")
             elif opened_post_view and already_liked is not None:
                 if media_type in (MediaType.REEL, MediaType.IGTV, MediaType.VIDEO):
+                    logger.debug(f"Media type REEL, IGTV, VIDEO")
                     opened_post_view.start_video()
                     video_opened = opened_post_view.open_video()
                     if video_opened:
@@ -288,6 +289,7 @@ def interact_with_user(
                         logger.debug("Closing video...")
                         device.back()
                 elif media_type in (MediaType.CAROUSEL, MediaType.PHOTO):
+                    logger.debug(f"Media type CAROUSEL, PHOTO")
                     if media_type == MediaType.CAROUSEL:
                         _browse_carousel(device, obj_count)
                     opened_post_view.watch_media(media_type)
@@ -689,8 +691,7 @@ def _comment(
                 universal_actions._swipe_points(
                     direction=Direction.DOWN, delta_y=randint(150, 250)
                 )
-    else:
-        print("===IS CHECK LIMIT===")
+                
     return False
 
 
