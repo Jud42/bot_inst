@@ -57,7 +57,7 @@ def start_bot(**kwargs):
     logger = logging.getLogger(__name__)
     # Pre-Load Config
     configs = Config(first_run=True, **kwargs)
-    configure_logger(configs.debug, configs.username)
+    configure_logger(configs.debug, None)
     if not kwargs:
         if "--config" not in configs.args:
             logger.info(

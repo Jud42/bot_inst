@@ -53,6 +53,38 @@ def create_log_file_handler(filename):
     )
     file_handler.addFilter(LoggerFilterGramAddictOnly())
     return file_handler
+# def create_log_file_handler(usernames):
+#     handlers = []
+    
+#     # Vérifiez que usernames est une liste
+#     if isinstance(usernames, list):
+#         for username in usernames:
+#             # Nettoyer les noms d'utilisateur pour les rendre valides comme noms de fichiers
+#             safe_username = username.replace(" ", "_").replace(".", "_").replace("/", "_")
+#             log_file = f"logs/{safe_username}.log"
+            
+#             file_handler = RotatingFileHandler(
+#                 log_file,
+#                 mode="a",
+#                 backupCount=10,
+#                 maxBytes=15 * 1000000,
+#                 encoding="utf-8",
+#             )
+
+#             file_handler.setLevel(logging.DEBUG)
+#             file_handler.setFormatter(
+#                 logging.Formatter(
+#                     fmt="%(asctime)s %(levelname)8s | %(message)s (%(filename)s:%(lineno)d)",
+#                     datefmt=r"[%m/%d %H:%M:%S]",
+#                 )
+#             )
+#             file_handler.addFilter(LoggerFilterGramAddictOnly())
+#             handlers.append(file_handler)
+#     else:
+#         raise ValueError("The 'usernames' parameter must be a list of usernames.")
+    
+#     return handlers
+
 
 
 def configure_logger(debug, username):

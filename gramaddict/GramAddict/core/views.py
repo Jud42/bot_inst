@@ -1763,8 +1763,11 @@ class ProfileView(ActionBarView):
                 break
             if self._old_ui_profile_button():
                 break
+            if self.device.find(descriptionContains="Save", clickable="true").exists():
+                self.device.find(descriptionContains="Save", clickable="true").click()
             if not self.device.find(descriptionContains="Log in"):
                 self.device.back()
+            
             
             # limit 
             elapsed_time = time.time() - start_time
