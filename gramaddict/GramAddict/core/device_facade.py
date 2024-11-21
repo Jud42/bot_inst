@@ -686,6 +686,7 @@ class DeviceFacade:
         def get_selected(self) -> bool:
             try:
                 if self.viewV2.exists():
+                    logger.debug(f"like button selected: {self.viewV2.info['selected']}")
                     return self.viewV2.info["selected"]
                 logger.debug(
                     "Object has disappeared! Probably too short video which has been liked!"

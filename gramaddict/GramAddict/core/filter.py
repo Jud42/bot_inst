@@ -50,6 +50,8 @@ FIELD_MIN_LIKERS = "min_likers"
 FIELD_MAX_LIKERS = "max_likers"
 FIELD_MUTUAL_FRIENDS = "mutual_friends"
 
+FIELD_SKIP__IF_ALREADY_LIKED = "skip_if_already_liked"
+
 IGNORE_CHARSETS = ["MATHEMATICAL"]
 
 
@@ -130,7 +132,8 @@ class Filter:
     conditions = None
 
     def __init__(self, storage=None):
-        filter_path = storage.filter_path
+        template_path = "config-examples/filters.yml"
+        filter_path = storage.filter_path if os.path.exists(storage.filter_path) else template_path
         if configs.args.disable_filters:
             logger.warning(
                 "Filters are disabled! (The default values in the documentation have been chosen!)"
@@ -210,6 +213,15 @@ class Filter:
             self.storage.add_filter_user(username, profile_data, skip_reason)
 
         return skip_reason is not None
+    
+    def skip_if_already_liked(self):
+        skip = self.conditions.get(
+                FIELD_SKIP__IF_ALREADY_LIKED, True
+            )
+        if not skip:
+            logger.debug("Filters: The option to interact even if the post is already liked is enabled.")
+            
+        return skip
 
     def check_profile(self, device, username):
         """

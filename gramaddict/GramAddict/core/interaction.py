@@ -276,16 +276,17 @@ def interact_with_user(
                 save_crash(device)
                 continue
             already_liked, _ = opened_post_view._is_post_liked()
+            skip_if_already_liked = profile_filter.skip_if_already_liked()
             if already_liked:
                 logger.info("Post already liked!")
-            elif opened_post_view and already_liked is not None:
+            if opened_post_view and not skip_if_already_liked:
                 if media_type in (MediaType.REEL, MediaType.IGTV, MediaType.VIDEO):
                     logger.debug(f"Media type REEL, IGTV, VIDEO")
                     opened_post_view.start_video()
                     video_opened = opened_post_view.open_video()
                     if video_opened:
                         opened_post_view.watch_media(media_type)
-                        like_succeed = opened_post_view.like_video()
+                        like_succeed = opened_post_view.like_video() if not already_liked else False
                         logger.debug("Closing video...")
                         device.back()
                 elif media_type in (MediaType.CAROUSEL, MediaType.PHOTO):
@@ -293,12 +294,15 @@ def interact_with_user(
                     if media_type == MediaType.CAROUSEL:
                         _browse_carousel(device, obj_count)
                     opened_post_view.watch_media(media_type)
-                    like_succeed = opened_post_view.like_post()
+                    like_succeed = opened_post_view.like_post() if not already_liked else False
                 if like_succeed:
                     register_like(device, session_state)
                     number_of_liked += 1
                 else:
-                    logger.warning("Fail to like post. Let's continue...")
+                    (
+                        logger.warning("Fail to like post. Let's continue...") if not already_liked
+                        else logger.warning("Let's continue...")
+                    )
                 if comment_percentage != 0 and can_comment(
                     media_type, profile_filter, current_mode
                 ):
@@ -802,7 +806,10 @@ def _load_and_clean_txt_file(
                 yield line
 
     lines = []
-    file_name = os.path.join(storage.ACCOUNTS, my_username, txt_filename)
+    file_name_1 = os.path.join(storage.ACCOUNTS, my_username, txt_filename) 
+    file_name_2 = "config-examples/comments_list.txt"
+    file_name = file_name_1 if os.path.exists(file_name_1) else file_name_2
+
     if path.isfile(file_name):
         try:
             with open(file_name, "r", encoding="utf-8") as f:
@@ -815,7 +822,7 @@ def _load_and_clean_txt_file(
         except Exception as e:
             logger.error(f"Error: {e}.")
             return None
-    logger.warning(f"{file_name} not found! Check your account folder.")
+    logger.warning(f"The paths: {file_name_1} or {file_name_2} , not found! Check your account folder.")
     return None
 
 

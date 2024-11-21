@@ -490,11 +490,15 @@ class PostsViewList:
             logger.info(
                 "Scroll down to see next post.", extra={"color": f"{Fore.GREEN}"}
             )
+
+            self.device.dump_hierarchy("ui_data_analyse/containers_gap.xml")
             gap_view_obj = self.device.find(index=-1, resourceIdMatches=containers_gap)
             obj1 = None
             for _ in range(3):
                 if not gap_view_obj.exists():
                     logger.debug("Can't find the gap obj, scroll down a little more.")
+                    self.device.dump_hierarchy("ui_data_analyse/containers_gap_2.xml")
+
                     PostsViewList(self.device).swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
                     gap_view_obj = self.device.find(resourceIdMatches=containers_gap)
                     if not gap_view_obj.exists():
@@ -503,12 +507,13 @@ class PostsViewList:
                         break
                 else:
                     media = self.device.find(resourceIdMatches=containers_content)
-                    print(f"**media exists**") if media.exists() else None
+                    logger.debug("==media exists==") if media.exists() else None
                     if (
                         media.exists() and
                         gap_view_obj.get_bounds()["bottom"]
                         < media.get_bounds()["bottom"]
                     ):
+                        logger.debug("gap bottom < media bottom")
                         PostsViewList(self.device).swipe_to_fit_posts(
                             SwipeTo.HALF_PHOTO
                         )

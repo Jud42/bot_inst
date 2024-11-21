@@ -7,8 +7,8 @@
 ##############################################################################
 # General Configuration
 ##############################################################################
-username: [premierbotte, tamere3679, fnouc5, dar.debile, deuxiemebotte, clairecommelclair, marvinmaydu6, smittymechant, djlilkevin, denis777633, kevinpo821, jes_apellegroot, jennabdhdu16, jugigo35, kevindu12letroll, posterbruno, traeyoungedits, hawkstop1, ramz.yzou, jamyliban, ma.xime8092, mariamaydu6, totolezozo., wallpaperinpinterest., hartbest71, giannisfreak100, lafournaisedu19, cesarrevient, denisschrogez, allerbasketjapon, fleurejolie20, pro.draw5, grocon.10]
-password: [premierbotte360\\\\, premierbotte360\\\\@, testdemotdepasse, testdemotdepasse, lemotdepassedudeuxiemebotte, lemotdepasse, mdpinchallah, mdpdumechant, jesaispasquoimettre69, lemotdepasseduquatriemebotte, motdepasseduscam, jechange667ekip/, lemotdepassedejenna, jaja567, mdpdekiki, catchandposter, traeyoung1, allezleshawks, lesrazmoquettes, allerlelivan, zeubghumid, allerlagrece, totolerigolo, quoicoubeh, mdpdejosh, mdpdegigi, fournaise19, nouveaumotdepasse, denis18, vivelejapon, laroserouge, ledessin, lecaca]
+username: [fnouc5] #[premierbotte, tamere3679, fnouc5, dar.debile, deuxiemebotte, clairecommelclair, marvinmaydu6, smittymechant, djlilkevin, denis777633, kevinpo821, jes_apellegroot, jennabdhdu16, jugigo35, kevindu12letroll, posterbruno, traeyoungedits, hawkstop1, ramz.yzou, jamyliban, ma.xime8092, mariamaydu6, totolezozo., wallpaperinpinterest., hartbest71, giannisfreak100, lafournaisedu19, cesarrevient, denisschrogez, allerbasketjapon, fleurejolie20, pro.draw5, grocon.10]
+password: [testdemotdepasse] #[premierbotte360\\\\, premierbotte360\\\\@, testdemotdepasse, testdemotdepasse, lemotdepassedudeuxiemebotte, lemotdepasse, mdpinchallah, mdpdumechant, jesaispasquoimettre69, lemotdepasseduquatriemebotte, motdepasseduscam, jechange667ekip/, lemotdepassedejenna, jaja567, mdpdekiki, catchandposter, traeyoung1, allezleshawks, lesrazmoquettes, allerlelivan, zeubghumid, allerlagrece, totolerigolo, quoicoubeh, mdpdejosh, mdpdegigi, fournaise19, nouveaumotdepasse, denis18, vivelejapon, laroserouge, ledessin, lecaca]
 # device: put_your_device_id_there # 'adb devices' in the console to know it.  It's needed only if you have more than 1 device connected
 app-id: com.instagram.android
 use-cloned-app: false
@@ -35,16 +35,16 @@ disable-filters: false
 
 # ## Interaction (active jobs)
 # blogger-followers: beyonce
-#blogger-following: [ fentybeauty, boobamedia ]
+# blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
 blogger: nickiminaj
-#hashtag-likers-top: [ jordan, puma ]
-#hashtag-likers-recent: [ jordan, puma ]
+# hashtag-likers-top: [ jordan, puma ]
+# hashtag-likers-recent: [ jordan, puma ]
 #hashtag-posts-top: [ jordan, puma ]
-#hashtag-posts-recent: [ jordan, puma ]
-#place-posts-top: [ switzerland, france ]
+# hashtag-posts-recent: [ jordan, puma ]
+# place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]
-#place-likers-top: [ switzerland, france ]
+# place-likers-top: [ switzerland, france ]
 # place-likers-recent: [ place1, place2 ]
 # interact-from-file: [usernames1.txt 10-15, usernames2.txt 3]
 # posts-from-file: posts.txt

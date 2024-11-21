@@ -52,7 +52,8 @@ class ResourceID:
         self.FOLLOW_LIST_USERNAME = f"{APP_ID}:id/follow_list_username"
         self.FOLLOW_SHEET_UNFOLLOW_ROW = f"{APP_ID}:id/follow_sheet_unfollow_row"
         self.FOOTER_SPACE = f"{APP_ID}:id/footer_space"
-        self.GAP_VIEW = f"{APP_ID}:id/gap_view"
+        #self.GAP_VIEW = f"{APP_ID}:id/gap_view"
+        self.GAP_VIEW = f"{APP_ID}:id/gap_binder_group|{APP_ID}:id/row_feed_profile_header"
         self.GAP_BINDER_GROUP = f"{APP_ID}:id/gap_binder_group"
         self.IGDS_HEADLINE_BODY = f"{APP_ID}:id/igds_headline_body"
         self.IGDS_HEADLINE_EMPHASIZED_HEADLINE = (
