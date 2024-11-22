@@ -517,8 +517,8 @@ class PostsViewList:
                         PostsViewList(self.device).swipe_to_fit_posts(
                             SwipeTo.HALF_PHOTO
                         )
-                        break
-                        #continue
+                        #break
+                        continue
                     suggested = self.device.find(resourceIdMatches=suggested_users)
                     if suggested.exists():
                         for _ in range(2):

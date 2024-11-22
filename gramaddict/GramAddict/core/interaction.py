@@ -279,7 +279,7 @@ def interact_with_user(
             skip_if_already_liked = profile_filter.skip_if_already_liked()
             if already_liked:
                 logger.info("Post already liked!")
-            if opened_post_view and not skip_if_already_liked:
+            if (opened_post_view and not already_liked) or (opened_post_view and not skip_if_already_liked):
                 if media_type in (MediaType.REEL, MediaType.IGTV, MediaType.VIDEO):
                     logger.debug(f"Media type REEL, IGTV, VIDEO")
                     opened_post_view.start_video()
@@ -321,7 +321,7 @@ def interact_with_user(
                         logger.info(
                             f"You've already did {max_comments_pro_user} {'comment' if max_comments_pro_user<=1 else 'comments'} for this user!"
                         )
-            else:
+            elif opened_post_view is None:
                 logger.warning("Can't find the post element!")
                 save_crash(device)
             if like_succeed or comment_done:
