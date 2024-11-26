@@ -16,7 +16,7 @@ from GramAddict.core.log import (
     is_log_file_updated,
     update_log_file_name,
 )
-from GramAddict.core.navigation import check_if_english
+from GramAddict.core.navigation import check_if_english, nav_to_logout
 from GramAddict.core.persistent_list import PersistentList
 from GramAddict.core.report import print_full_report
 from GramAddict.core.session_state import SessionState, SessionStateEncoder
@@ -214,9 +214,16 @@ def start_bot(**kwargs):
         while True:
             
             try:
-                
-                log_in = account_view.navigateToLogIn(configs.args.username, configs.args.password)
-                if log_in == "Error":
+                logout_list = account_view.loginFromLogoutAccount(None, None, check=True)
+                log_in = account_view.navigateToLogIn(None, None, check=True)
+                res = ""
+                if logout_list:
+                    logger.debug(f"Start from Logout list view...")
+                    res = account_view.loginFromLogoutAccount(configs.args.username, configs.args.password)
+                elif log_in:
+                    logger.debug(f"Start from Log in view ...")
+                    res = account_view.navigateToLogIn(configs.args.username, configs.args.password)
+                if res == "Error":
                     save_crash(device)
                     break_ = True
                     break
@@ -371,6 +378,9 @@ def start_bot(**kwargs):
                     )
                     print_limits = True
 
+            nav_to_logout(device)
+            while not account_view.loginFromLogoutAccount(None, None, check=True): pass
+
             # save the session in sessions.json
             session_state.finishTime = datetime.now()
             sessions.persist(directory=session_state.my_username)
@@ -457,7 +467,7 @@ def start_bot(**kwargs):
                     )
             else:
                 break
-        
+
         print_telegram_reports(
             configs,
             telegram_reports_at_end,

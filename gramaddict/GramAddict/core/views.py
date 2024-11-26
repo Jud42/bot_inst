@@ -451,7 +451,6 @@ class SearchView:
                 resourceIdMatches=ResourceID.SEARCH_ROW_ITEM,
             )
         if obj.exists():
-            self.device.dump_hierarchy("ui_data_analyse/searchRow.xml")
             obj.click()
             return True
         return False
@@ -491,13 +490,11 @@ class PostsViewList:
                 "Scroll down to see next post.", extra={"color": f"{Fore.GREEN}"}
             )
 
-            self.device.dump_hierarchy("ui_data_analyse/containers_gap.xml")
             gap_view_obj = self.device.find(index=-1, resourceIdMatches=containers_gap)
             obj1 = None
             for _ in range(3):
                 if not gap_view_obj.exists():
                     logger.debug("Can't find the gap obj, scroll down a little more.")
-                    self.device.dump_hierarchy("ui_data_analyse/containers_gap_2.xml")
 
                     PostsViewList(self.device).swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
                     gap_view_obj = self.device.find(resourceIdMatches=containers_gap)
@@ -763,7 +760,6 @@ class PostsViewList:
             )
 
             if not post_description.exists() and post_description.count_items() >= 1:
-                # self.device.dump_hierarchy("./postsView1.xml")
                 text = post_description.get_text()
                 print(f"== dans la condition if not post_ text == {text}")
                 post_description = self.device.find(
@@ -1195,25 +1191,51 @@ class AccountView:
             logger.error("Not able to set your app in English! Do it by yourself!")
             exit(0)
 
-    def navigateToLogIn(self, username, password):
-        logger.debug("Check Log in Page ...")
+    def loginFromLogoutAccount(self, username, password, check=False):
+        # list users
+        # Log into another account
+        # Create new account
+        log_other = self.device.find(descriptionMatches="Log into another account", clickable="true")
+        create_new = self.device.find(descriptionMatches="Create new account", clickable="true")
+        if check:
+            logger.debug("Check Logout list ...")
+            return (log_other.exists() and create_new.exists())
+        target_element = self.device.find(descriptionMatches=username, clickable="true")
+
+
+        if target_element.exists():
+            target_element.click()
+        elif log_other.exists() and create_new.exists():
+            log_other.click()
+            self.navigateToLogIn(username, password)
+        else:
+            logger.debug("Erreur element of UI not found maybe updated !")
+            return "Error"
+        
+
+
+    def navigateToLogIn(self, username, password, check=False):
         random_sleep(2, 3, modulable=False)
-        #device.dump_hierarchy("./question_log_in.xml")
+        log_in = self.device.find(descriptionMatches="Log in", clickable="true")
+        if check:
+            logger.debug("Check Log in Page ...")
+            return log_in.exists()
         log_in_question = self.device.find(text="Do you have an account?")
         self.device.find(descriptionContains="Close").click() if log_in_question.exists() else None
         random_sleep(2, 3, modulable=False) if log_in_question.exists() else None
-        log_in = self.device.find(descriptionContains="Log in", clickable="true")
         if log_in.exists() and (username and password is not None):
             logger.debug("Log in page found !")
             random_sleep(2, 3, modulable=False)
             username_field = self.device.find(text="Username, email or mobile number")
             password_field = self.device.find(text="Password")
-            if username_field.exists() and password_field.exists():
-                logger.debug("Entering user's username and password")
+            if username_field.exists():
+                logger.debug("Entering user's username")
                 username_field.set_text(username, Mode.TYPE)
+            if password_field.exists():
+                logger.debug("Entering password")
                 password_field.set_text(password, Mode.TYPE)
                 log_in.click()
-                random_sleep(2, 3, modulable=False)
+                while log_in.exists(): pass
                 return True
             else:
                 logger.error("Username & Passowrd fields not found within Log In Element")
@@ -1296,7 +1318,6 @@ class AccountView:
 
     def _find_username(self, username, password, has_scrolled=False):
         list_view = self.device.find(resourceId=ResourceID.LIST)
-        # self.device.dump_hierarchy("./new_dump.xml")
         # username_obj = self.device.find(
         #     resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
         #     textMatches=case_insensitive_re(username),

@@ -7,8 +7,8 @@
 ##############################################################################
 # General Configuration
 ##############################################################################
-username: [fnouc5] #[premierbotte, tamere3679, fnouc5, dar.debile, deuxiemebotte, clairecommelclair, marvinmaydu6, smittymechant, djlilkevin, denis777633, kevinpo821, jes_apellegroot, jennabdhdu16, jugigo35, kevindu12letroll, posterbruno, traeyoungedits, hawkstop1, ramz.yzou, jamyliban, ma.xime8092, mariamaydu6, totolezozo., wallpaperinpinterest., hartbest71, giannisfreak100, lafournaisedu19, cesarrevient, denisschrogez, allerbasketjapon, fleurejolie20, pro.draw5, grocon.10]
-password: [testdemotdepasse] #[premierbotte360\\\\, premierbotte360\\\\@, testdemotdepasse, testdemotdepasse, lemotdepassedudeuxiemebotte, lemotdepasse, mdpinchallah, mdpdumechant, jesaispasquoimettre69, lemotdepasseduquatriemebotte, motdepasseduscam, jechange667ekip/, lemotdepassedejenna, jaja567, mdpdekiki, catchandposter, traeyoung1, allezleshawks, lesrazmoquettes, allerlelivan, zeubghumid, allerlagrece, totolerigolo, quoicoubeh, mdpdejosh, mdpdegigi, fournaise19, nouveaumotdepasse, denis18, vivelejapon, laroserouge, ledessin, lecaca]
+username: [dar.debile, deuxiemebotte] #[premierbotte, tamere3679, fnouc5, dar.debile, deuxiemebotte, clairecommelclair, marvinmaydu6, smittymechant, djlilkevin, denis777633, kevinpo821, jes_apellegroot, jennabdhdu16, jugigo35, kevindu12letroll, posterbruno, traeyoungedits, hawkstop1, ramz.yzou, jamyliban, ma.xime8092, mariamaydu6, totolezozo., wallpaperinpinterest., hartbest71, giannisfreak100, lafournaisedu19, cesarrevient, denisschrogez, allerbasketjapon, fleurejolie20, pro.draw5, grocon.10]
+password: [testdemotdepasse, lemotdepassedudeuxiemebotte] #[premierbotte360\\\\, premierbotte360\\\\@, testdemotdepasse, testdemotdepasse, lemotdepassedudeuxiemebotte, lemotdepasse, mdpinchallah, mdpdumechant, jesaispasquoimettre69, lemotdepasseduquatriemebotte, motdepasseduscam, jechange667ekip/, lemotdepassedejenna, jaja567, mdpdekiki, catchandposter, traeyoung1, allezleshawks, lesrazmoquettes, allerlelivan, zeubghumid, allerlagrece, totolerigolo, quoicoubeh, mdpdejosh, mdpdegigi, fournaise19, nouveaumotdepasse, denis18, vivelejapon, laroserouge, ledessin, lecaca]
 # device: put_your_device_id_there # 'adb devices' in the console to know it.  It's needed only if you have more than 1 device connected
 app-id: com.instagram.android
 use-cloned-app: false
@@ -21,7 +21,7 @@ debug: true
 # kill-atx-agent: false
 # restart-atx-agent: false
 disable-block-detection: false
-disable-filters: false
+disable-filters: true
 # dont-type: false
 # # scrape-to-file: scraped.txt
 # total-crashes-limit: 5
@@ -87,7 +87,7 @@ can-reinteract-after: 0 # the amount of hours that have to pass from the last in
 # ##############################################################################
 
 interactions-count: 3 # for blogger: following,followers,post-likers (nb account you wish to interact)
-likes-count: 3
+likes-count: 0
 likes-percentage: 100
 #stories-count: 5
 #stories-percentage: 100
@@ -133,5 +133,5 @@ total-comments-limit: 10-20
 
 # working-hours: [10.15-16.40, 18.15-22.46]
 #time-delta: 3-5
-# repeat: 280-320
-# total-sessions: 1 # -1 or commented for infinite sessions
+#repeat: 280-320
+#total-sessions: 3 # -1 or commented for infinite sessions

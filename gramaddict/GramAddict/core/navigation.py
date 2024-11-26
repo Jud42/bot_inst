@@ -3,7 +3,7 @@ import sys
 
 from colorama import Fore
 
-from GramAddict.core.device_facade import Timeout
+from GramAddict.core.device_facade import Timeout, Direction, SleepTime
 from GramAddict.core.views import (
     HashTagView,
     PlacesView,
@@ -11,6 +11,7 @@ from GramAddict.core.views import (
     ProfileView,
     TabBarView,
     UniversalActions,
+    AccountView,
 )
 
 logger = logging.getLogger(__name__)
@@ -21,11 +22,12 @@ def check_if_english(device):
     logger.debug("Checking if app is in English..")
 
     while True:
-        log_in = device.find(descriptionContains="Log in")
+        account_view = AccountView(device)
+        log_in = account_view.navigateToLogIn(None, None, check=True)
+        logout_list = account_view.loginFromLogoutAccount(None, None, check=True)
         home_view = device.find(resourceId="com.instagram.android:id/username")
 
-        if log_in.exists():
-            logger.debug("From Log in Page..")
+        if log_in:
             english = device.find(textContains="English")
             logger.debug("Instagram in English.") if english.exists() else sys.exit(1)
             break
@@ -37,6 +39,9 @@ def check_if_english(device):
             else:
                 logger.error("Please change the language manually to English!")
                 sys.exit(1)
+        elif logout_list:
+            logger.debug("Instagram in English.")
+            break
                 
             #post, follower, following = ProfileView(device)._getSomeText()
             # if None in {post, follower, following}:
@@ -143,3 +148,24 @@ def nav_to_post_likers(device, username, my_username):
 
 def nav_to_feed(device):
     TabBarView(device).navigateToHome()
+
+def nav_to_logout(device):
+    logger.debug("== nav_to_logout() ==")
+
+    profile_view = TabBarView(device).navigateToProfile()
+    profile_options = device.find(descriptionMatches="Options", clickable="true")
+    if profile_options.exists():
+        profile_options.click()
+    logout_element = device.find(textMatches="Log out", clickable="true")
+    displayWidth = device.get_info()["displayWidth"]
+    while not logout_element.exists():
+        UniversalActions(device)._swipe_points(
+                    direction=Direction.DOWN, delta_y=displayWidth
+        )
+    logout_element.click(sleep=SleepTime.SHORT)
+    final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text="Log out", clickable="true")
+    if final_button.exists():
+        logger.debug("Log out button found !")
+        final_button.click(sleep=SleepTime.SHORT)
+    else:
+        logger.debug("Log out button not found !")

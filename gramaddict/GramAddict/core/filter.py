@@ -215,13 +215,15 @@ class Filter:
         return skip_reason is not None
     
     def skip_if_already_liked(self):
-        skip = self.conditions.get(
-                FIELD_SKIP__IF_ALREADY_LIKED, True
-            )
-        if not skip:
-            logger.debug("Filters: The option to interact even if the post is already liked is enabled.")
-            
-        return skip
+        if self.conditions is not None:
+            skip = self.conditions.get(
+                    FIELD_SKIP__IF_ALREADY_LIKED, True
+                )
+            if not skip:
+                logger.debug("Filters: The option to interact even if the post is already liked is enabled.")
+                
+            return skip
+        return True
 
     def check_profile(self, device, username):
         """
