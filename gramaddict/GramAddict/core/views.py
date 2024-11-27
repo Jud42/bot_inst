@@ -244,8 +244,21 @@ class HashTagView:
         else:
             logger.debug("First image in view doesn't exists.")
         return obj
+    
+    def _navToReels(self):
+        field_scroll = self.device.find(resourceIdMatches="com.instagram.android:id/scrollable_tab_layout", scrollable="true")
+        reels_obj = self.device.find(className="android.widget.TabWidget", textMatches="Reels", clickable="true")
+        if field_scroll.exists():
+            while not reels_obj.exists():
+                field_scroll.scroll(Direction.RIGHT)
+            reels_obj.click(sleep=SleepTime.DEFAULT)
+        else:
+            print("element field_scroll doesn't found !")
+
 
     def _getRecentTab(self):
+        #self.device.dump_hierarchy("./tagRecentTab.xml")
+        self._navToReels()
         obj = self.device.find(
             className=ClassName.TEXT_VIEW,
             textMatches=case_insensitive_re(TabBarText.RECENT_CONTENT_DESC),

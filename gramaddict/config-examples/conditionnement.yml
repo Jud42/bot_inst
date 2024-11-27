@@ -37,11 +37,11 @@ disable-filters: true
 # blogger-followers: beyonce
 # blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-blogger: dolce_lausanne
+# blogger: dolce_lausanne
 # hashtag-likers-top: [ jordan, puma ]
 # hashtag-likers-recent: [ jordan, puma ]
-#hashtag-posts-top: [ jordan, puma ]
-# hashtag-posts-recent: [ jordan, puma ]
+# hashtag-posts-top: [ jordan, puma ]
+hashtag-posts-recent: [ champoulausanne ]
 # place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]
 # place-likers-top: [ switzerland, france ]
@@ -132,6 +132,6 @@ total-comments-limit: 10-20
 # ##############################################################################
 
 # working-hours: [10.15-16.40, 18.15-22.46]
-#time-delta: 3-5
+time-delta: 0
 #repeat: 280-320
 #total-sessions: 3 # -1 or commented for infinite sessions

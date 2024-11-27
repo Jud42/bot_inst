@@ -155,17 +155,31 @@ def nav_to_logout(device):
     profile_view = TabBarView(device).navigateToProfile()
     profile_options = device.find(descriptionMatches="Options", clickable="true")
     if profile_options.exists():
-        profile_options.click()
-    logout_element = device.find(textMatches="Log out", clickable="true")
-    displayWidth = device.get_info()["displayWidth"]
-    while not logout_element.exists():
-        UniversalActions(device)._swipe_points(
-                    direction=Direction.DOWN, delta_y=displayWidth
-        )
-    logout_element.click(sleep=SleepTime.SHORT)
-    final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text="Log out", clickable="true")
-    if final_button.exists():
-        logger.debug("Log out button found !")
-        final_button.click(sleep=SleepTime.SHORT)
+        profile_options.click(sleep=SleepTime.DEFAULT)
+        scrollable_obj = device.find(scrollable="true")
+        if scrollable_obj.exists():
+            logout_element = device.find(textMatches="Log out", clickable="true")
+            while not logout_element.exists():
+                scrollable_obj.scroll(Direction.DOWN)
+            logout_element.click(sleep=SleepTime.DEFAULT)
+            
+            # check if popup save login request appears
+            save_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", textMatches="Save")
+            not_now_button = device.find(resourceIdMatches="com.instagram.android:id/negative_button", textMatches="Not now")
+            if save_button.exists() and not_now_button.exists():
+                save_button.click(sleep=SleepTime.DEFAULT)
+            
+            final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text="Log out", clickable="true")
+            if final_button.exists():
+                logger.debug("Log out button found !")
+                final_button.click(sleep=SleepTime.SHORT)
+                # return True
+            else:
+                logger.debug("Log out button not found !")
+                # return False
+        else:
+            logger.debug("Scroll element not found !")
+            # return false
     else:
-        logger.debug("Log out button not found !")
+        logger.debug("Options element not found !")
+        # return False

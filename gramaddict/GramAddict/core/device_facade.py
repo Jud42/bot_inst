@@ -554,7 +554,12 @@ class DeviceFacade:
 
         def scroll(self, direction):
             try:
-                if direction == Direction.UP:
+                
+                if direction == Direction.RIGHT:
+                    self.viewV2.scroll.horiz.toEnd(max_swipes=1)
+                elif direction == Direction.LEFT:
+                    self.viewV2.scroll.horiz.toBeginning(max_swipes=1)
+                elif direction == Direction.UP:
                     self.viewV2.scroll.toBeginning(max_swipes=1)
                 else:
                     self.viewV2.scroll.toEnd(max_swipes=1)
