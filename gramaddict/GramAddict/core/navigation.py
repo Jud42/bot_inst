@@ -24,12 +24,12 @@ def check_if_english(device):
     while True:
         account_view = AccountView(device)
         log_in = account_view.navigateToLogIn(None, None, check=True)
-        logout_list = account_view.loginFromLogoutAccount(None, None, check=True)
+        logout_list = account_view.loginFromLogoutAccount(None, None, check=True) if not log_in else False
         home_view = device.find(resourceId="com.instagram.android:id/username")
 
-        if log_in:
-            english = device.find(textContains="English")
-            logger.debug("Instagram in English.") if english.exists() else sys.exit(1)
+        if log_in or logout_list:
+            #english = device.find(textContains="English")
+            logger.debug("Instagram in English.") #if english.exists() else sys.exit(1)
             break
         elif home_view.exists():
             logger.debug("From Home Page..")
@@ -39,10 +39,6 @@ def check_if_english(device):
             else:
                 logger.error("Please change the language manually to English!")
                 sys.exit(1)
-        elif logout_list:
-            logger.debug("Instagram in English.")
-            break
-                
             #post, follower, following = ProfileView(device)._getSomeText()
             # if None in {post, follower, following}:
             #     logger.warning(
@@ -156,6 +152,7 @@ def nav_to_logout(device):
     profile_options = device.find(descriptionMatches="Options", clickable="true")
     if profile_options.exists():
         profile_options.click(sleep=SleepTime.DEFAULT)
+        while profile_options.exists(): pass
         scrollable_obj = device.find(scrollable="true")
         if scrollable_obj.exists():
             logout_element = device.find(textMatches="Log out", clickable="true")
@@ -166,20 +163,21 @@ def nav_to_logout(device):
             # check if popup save login request appears
             save_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", textMatches="Save")
             not_now_button = device.find(resourceIdMatches="com.instagram.android:id/negative_button", textMatches="Not now")
+            choice = save_button
             if save_button.exists() and not_now_button.exists():
-                save_button.click(sleep=SleepTime.DEFAULT)
+                choice.click(sleep=SleepTime.DEFAULT)
             
             final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text="Log out", clickable="true")
             if final_button.exists():
                 logger.debug("Log out button found !")
                 final_button.click(sleep=SleepTime.SHORT)
-                # return True
+                return True
             else:
-                logger.debug("Log out button not found !")
-                # return False
+                logger.critical("Log out button not found !")
+                return False
         else:
-            logger.debug("Scroll element not found !")
-            # return false
+            logger.critical("Scroll element not found !")
+            return False
     else:
-        logger.debug("Options element not found !")
-        # return False
+        logger.critical("Options element not found !")
+        return False

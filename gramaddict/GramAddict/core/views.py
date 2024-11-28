@@ -1238,7 +1238,7 @@ class AccountView:
         random_sleep(2, 3, modulable=False) if log_in_question.exists() else None
         if log_in.exists() and (username and password is not None):
             logger.debug("Log in page found !")
-            random_sleep(2, 3, modulable=False)
+            #random_sleep(2, 3, modulable=False)
             username_field = self.device.find(text="Username, email or mobile number")
             password_field = self.device.find(text="Password")
             if username_field.exists():
@@ -1247,17 +1247,16 @@ class AccountView:
             if password_field.exists():
                 logger.debug("Entering password")
                 password_field.set_text(password, Mode.TYPE)
-                log_in.click()
-                while log_in.exists(): pass
-                return True
-            else:
-                logger.error("Username & Passowrd fields not found within Log In Element")
-                return "Error"
+            log_in.click()
+            while log_in.exists(): pass
+            return True
+            # else:
+            #     logger.error("Username & Passowrd fields not found within Log In Element")
+            #     return "Error"
         elif log_in.exists():
             logger.dubug("Log in page found !")
-            logger.error("you need to specify the username and password in config.yml!")
+            logger.critical("you need to specify the username and password in config.yml!")
             return "Error"
-            #exit(1)
         logger.debug("Log in page not found !")
         return False
         # if no conditions are met the function return None implicitly
@@ -1330,6 +1329,7 @@ class AccountView:
         return False
 
     def _find_username(self, username, password, has_scrolled=False):
+        logger.debug("== _find_username() ==")
         list_view = self.device.find(resourceId=ResourceID.LIST)
         # username_obj = self.device.find(
         #     resourceIdMatches=f"{ResourceID.ROW_USER_TEXTVIEW}|{ResourceID.USERNAME_TEXTVIEW}",
@@ -1342,9 +1342,12 @@ class AccountView:
             # case: Account found but need password for the login
             log_in = self.device.find(descriptionContains="Log in", clickable="true")
             password_field = self.device.find(text="Password")
-            if (log_in.exists() and password_field) and (username and password is not None):
+            if (log_in.exists() and password_field.exists()) and (username and password is not None):
                 logger.debug(f"Entering password for: {username} !")
                 password_field.set_text(password, Mode.TYPE)
+                log_in.click()
+                random_sleep(2, 3, modulable=False)
+            elif log_in.exists() and not password_field.exists():
                 log_in.click()
                 random_sleep(2, 3, modulable=False)
             logger.info(
@@ -1774,9 +1777,15 @@ class ProfileView(ActionBarView):
             save_crash(self.device)
             return None, None, None
 
+    def _getProfileTab(self):
+        return self.device.find(resourceId="com.instagram.android:id/profile_tab")
+    def _getTabAvatar(self):
+        return self.device.find(resourceIdMatches=ResourceID.TAB_AVATAR)
+
     def _new_ui_profile_button(self) -> bool:
+        logger.debug("_new_ui_profile_button()")
         found = False
-        buttons = self.device.find(resourceId="com.instagram.android:id/profile_tab")
+        buttons = self._getProfileTab()
         #if not buttons.exists():
          #   print(f"_new_ui: check: Obj bef for")
         #for button in buttons:
@@ -1788,8 +1797,9 @@ class ProfileView(ActionBarView):
         return found
 
     def _old_ui_profile_button(self) -> bool:
+        logger.debug("_old_ui_profile_button()")
         found = False
-        obj = self.device.find(resourceIdMatches=ResourceID.TAB_AVATAR)
+        obj = self._getTabAvatar()
         if obj.exists(Timeout.MEDIUM):
             obj.click()
             found = True

@@ -214,15 +214,16 @@ def start_bot(**kwargs):
         while True:
             
             try:
-                logout_list = account_view.loginFromLogoutAccount(None, None, check=True)
                 log_in = account_view.navigateToLogIn(None, None, check=True)
+                logout_list = account_view.loginFromLogoutAccount(None, None, check=True) if not log_in else False
                 res = ""
-                if logout_list:
-                    logger.debug(f"Start from Logout list view...")
-                    res = account_view.loginFromLogoutAccount(configs.args.username, configs.args.password)
-                elif log_in:
+                if log_in:
                     logger.debug(f"Start from Log in view ...")
                     res = account_view.navigateToLogIn(configs.args.username, configs.args.password)
+                elif logout_list:
+                    logger.debug(f"Start from Logout list view...")
+                    res = account_view.loginFromLogoutAccount(configs.args.username, configs.args.password)
+                
                 if res == "Error":
                     save_crash(device)
                     break_ = True
@@ -377,9 +378,20 @@ def start_bot(**kwargs):
                         device, configs, storage, sessions, filters, plugin
                     )
                     print_limits = True
-
-            nav_to_logout(device)
-            while not account_view.loginFromLogoutAccount(None, None, check=True): pass
+            
+            # logout
+            if nav_to_logout(device):
+                sleep(5)
+                if not profile_view._getProfileTab().exists() and not profile_view._getTabAvatar().exists():
+                    while (
+                        not account_view.loginFromLogoutAccount(None, None, check=True) and
+                        not account_view.navigateToLogIn(None, None, check=True)
+                    ): 
+                        logger.debug("check position after logout !")
+                        pass
+            else:
+                save_crash(device)
+                stop_bot(device, sessions, session_state)
 
             # save the session in sessions.json
             session_state.finishTime = datetime.now()
