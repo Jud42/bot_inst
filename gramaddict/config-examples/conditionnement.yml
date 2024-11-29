@@ -37,7 +37,7 @@ disable-filters: true
 # blogger-followers: beyonce
 # blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-# blogger: dolce_lausanne
+#blogger: dolce_lausanne
 # hashtag-likers-top: [ jordan, puma ]
 # hashtag-likers-recent: [ jordan, puma ]
 # hashtag-posts-top: [ jordan, puma ]
@@ -87,7 +87,7 @@ can-reinteract-after: 0 # the amount of hours that have to pass from the last in
 # ##############################################################################
 
 interactions-count: 3 # for blogger: following,followers,post-likers (nb account you wish to interact)
-likes-count: 0
+likes-count: 2
 likes-percentage: 100
 #stories-count: 5
 #stories-percentage: 100

@@ -1,8 +1,6 @@
-import logging
-import sys
+import logging, sys, time
 
 from colorama import Fore
-
 from GramAddict.core.device_facade import Timeout, Direction, SleepTime
 from GramAddict.core.views import (
     HashTagView,
@@ -145,16 +143,24 @@ def nav_to_post_likers(device, username, my_username):
 def nav_to_feed(device):
     TabBarView(device).navigateToHome()
 
+def elementAppears(element, name):
+    start_time = time.time()
+    while not element.exists():
+        logger.debug(f"Waiting the '{name}' element, appears...")
+        if (time.time() - start_time) >= 5:
+            print("5 seconds have passed. Exiting the loop.")
+            return False
+    return True
+
 def nav_to_logout(device):
     logger.debug("== nav_to_logout() ==")
 
     profile_view = TabBarView(device).navigateToProfile()
     profile_options = device.find(descriptionMatches="Options", clickable="true")
-    if profile_options.exists():
+    if elementAppears(profile_options, "Option profile"):
         profile_options.click(sleep=SleepTime.DEFAULT)
-        while profile_options.exists(): pass
         scrollable_obj = device.find(scrollable="true")
-        if scrollable_obj.exists():
+        if elementAppears(scrollable_obj, "Srollable"):
             logout_element = device.find(textMatches="Log out", clickable="true")
             while not logout_element.exists():
                 scrollable_obj.scroll(Direction.DOWN)
