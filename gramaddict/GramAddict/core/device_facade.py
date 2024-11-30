@@ -350,6 +350,21 @@ class DeviceFacade:
                 return iter(children)
             except uiautomator2.JSONRPCError as e:
                 raise DeviceFacade.JsonRpcError(e)
+        
+        def __getitem__(self, index):
+            """
+            Allow to access viewV2 obj by index.
+            """
+            try:
+                # check if self.viewV2 manage the indexation
+                if hasattr(self.viewV2, '__getitem__'):
+                    return DeviceFacade.View(view=self.viewV2[index], device=self.deviceV2)
+                else:
+                    raise TypeError(f"self.viewV2 is not indexable.")
+            except IndexError:
+                raise IndexError(f"The index {index} is out of bounds for viewV2 obj.")
+            except uiautomator2.JSONRPCError as e:
+                raise DeviceFacade.JsonRpcError(e)
 
         def ui_info(self):
             try:

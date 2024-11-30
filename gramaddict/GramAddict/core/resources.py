@@ -126,6 +126,7 @@ class ResourceID:
         self.ROW_FEED_LIKE_COUNT_FACEPILE_STUB = (
             f"{APP_ID}:id/row_feed_like_count_facepile_stub"
         )
+        self.ROW_FEED_LIKE_COUNT = f"{APP_ID}:id/row_feed_like_count"
         self.ROW_FEED_PHOTO_PROFILE_IMAGEVIEW = f"{APP_ID}:id/row_feed_photo_profile_imageview"
         self.ROW_FEED_PHOTO_PROFILE_NAME = f"{APP_ID}:id/row_feed_photo_profile_name"
         self.ROW_FEED_TEXTVIEW_LIKES = f"{APP_ID}:id/row_feed_textview_likes"

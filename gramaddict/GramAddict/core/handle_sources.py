@@ -527,8 +527,8 @@ def handle_posts(
             has_tags,
         ) = post_view_list._check_if_last_post(post_description, current_job)
         print("== HANDLE_POSTS je sors de _check_if_last_post ==")
-        has_likers, number_of_likers = post_view_list._find_likers_container()
-        already_liked, _ = opened_post_view._is_post_liked()
+        has_likers, number_of_likers, already_liked = post_view_list._find_likers_container()
+        #already_liked, _ = opened_post_view._is_post_liked() if has_likers else False, _
         print("== HANDLE_POSTS CLOSE COMMENT ==")
         if not (is_ad or is_hashtag):
             if already_liked_count == already_liked_count_limit:

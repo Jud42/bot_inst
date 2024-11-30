@@ -564,67 +564,36 @@ class PostsViewList:
             return True
 
     def _find_likers_container(self):
-        universal_actions = UniversalActions(self.device)
-        containers_gap = ResourceID.GAP_VIEW_AND_FOOTER_SPACE
-        media_container = ResourceID.MEDIA_CONTAINER
-        likes = 0
-        for _ in range(4):
-            gap_view_obj = self.device.find(resourceIdMatches=containers_gap)
-            # likes_view = self.device.find(
-            #     index=-1,
-            #     resourceId=ResourceID.ROW_FEED_TEXTVIEW_LIKES,
-            #     className=ClassName.TEXT_VIEW,
-            # )
-
-            likes_view = self.device.find(
-                resourceId=ResourceID.ROW_FEED_VIEW_GROUP_BUTTONS
-            ).child(index=1, className="android.widget.Button")
-
-            # description_view = self.device.find(
-            #     resourceIdMatches=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT
-            # )
-
-            description_view = self.device.find(
-                resourceId=ResourceID.ROW_FEED_VIEW_GROUP_BUTTONS
-            ).child(index=3, className="android.widget.Button")
-
-
-            # media = self.device.find(
-            #     resourceIdMatches=media_container,
-            # )
-            # media_count = media.count_items()
-            # logger.debug(f"I can see {media_count} media(s) in this view..")
-
-            # if media_count > 1 and (
-            #     media.get_bounds()["bottom"]
-            #     < self.device.get_info()["displayHeight"] / 3
-            # ):
-            #     universal_actions._swipe_points(Direction.DOWN, delta_y=100)
-            #     continue
-            if not likes_view.exists():
-                print("== likes_view obj doesn't exist ==")
-                if description_view.exists() or gap_view_obj.exists():
-                    print("== likes_view doesn't exist but description obj exist ==")
-                    return False, likes
-                else:
-                    print("== likes_view and description obj doesn't exist ==")
-                    universal_actions._swipe_points(Direction.DOWN, delta_y=100)
-                    continue
-            # elif media.exists() and media.get_bounds()["bottom"] > likes_view.get_bounds()["bottom"]:
-            #     universal_actions._swipe_points(Direction.DOWN, delta_y=100)
-            #     continue
-
-            logger.debug("Likers container exists!")
-            has_likers = likes_view.get_text() != ""
-            likes = likes_view.get_text() if has_likers else 0
-            if not has_likers:
-                print("== No like on this post ==")
-            #likes = self._get_number_of_likers(likes_view)
-            #return likes_view.exists(), likes
+        logger.debug("== _find_likers_container() ==")
+        # universal_actions = UniversalActions(self.device)
+        # containers_gap = ResourceID.GAP_VIEW_AND_FOOTER_SPACE
+        # media_container = ResourceID.MEDIA_CONTAINER
+        # likes = 0
+        nb_likes = 0
+        already_liked = False
+        button_like_obj = self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE)
+        like_count_obj = False
+        if button_like_obj.exists():
+            nb_obj = button_like_obj.count_items()
+            logger.debug(f"{nb_obj} elements with the same ID found.")
+            if nb_obj == 1:
+                already_liked = button_like_obj.get_selected()
+                like_count_obj = button_like_obj.sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
+                nb_likes = like_count_obj.get_text()
             else:
-                print(f"== has_likers: {has_likers}; number likers: {likes} ==")
-            return has_likers, likes 
-        return False, 0
+                # UniversalActions(self.device)._swipe_points(
+                #     direction=Direction.DOWN, delta_y=80
+                # )
+                self.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
+                self._find_likers_container()
+                # already_liked = button_like_obj[nb_obj - 1].get_selected()
+                # like_count_obj = button_like_obj[nb_obj - 1].sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
+                # nb_likes = like_count_obj.get_text()
+            logger.debug(f"Like exist: {like_count_obj.exists()}\nNumber of like: {nb_likes}\nAlready liked: {already_liked}")
+            return like_count_obj.exists(), nb_likes, already_liked
+        else:
+            logger.critical(f"Like button not found !")
+            return like_count_obj, nb_likes, already_liked  
 
     def _get_number_of_likers(self, likes_view):
         likes = 0
@@ -867,9 +836,7 @@ class PostsViewList:
             #)
             
             post_owner_obj = self._get_post_owner_obj()
-            username = self._get_post_owner_name() if post_owner_obj.exists() else None
-            print(f"_post_owner_obj NAME == {username}") if username else None
-            
+            username = self._get_post_owner_name() if post_owner_obj.exists() else None            
         else:
             print(f"== _post_owner: username exist: {username} ==")
             for _ in range(2):
@@ -953,38 +920,36 @@ class PostsViewList:
             return None, is_ad, is_hashtag
         
     def _get_post_owner_obj(self):
+        logger.debug("== _get_post_owner_obj() ==")
         
         owner_obj = self.device.find(
-                resourceIdMatches=ResourceID.ROW_FEED_PROFILE_HEADER
-            ).child(index=0, className="android.view.ViewGroup", clickable="true")
+                resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
+            )#.child(index=0, className="android.view.ViewGroup", clickable="true")
         if owner_obj.exists():
+            logger.debug(f"Owner object found: {owner_obj.exists()}")
             return owner_obj
         else:
             owner_obj = self.device.find(
                 index=-1,
                 classNameMatches=ClassName.TEXTVIEW_IGTEXTLAYOUTVIEW
             ).child(index=0, className="android.widget.Button", clickable="true")
-            return owner_obj if owner_obj.exists() else None
+            logger.debug(f"Owner object found: {owner_obj.exists()}")
+            return owner_obj
 
     def _get_post_owner_name(self):
-        #return self.device.find(
-        #    resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
-        #).get_text()
-
-        user_feed = self.device.find(resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_IMAGEVIEW)
-        if user_feed.exists():
-            match = re.search(r'Profile picture of ([\w.]+)', user_feed.get_desc())
-            if match:
-                return match.group(1)
-            else:
-                return None
-        else:
-            user_feed = self.device.find(
-                index=-1,
-                classNameMatches=ClassName.TEXTVIEW_IGTEXTLAYOUTVIEW
-            ).child(index=0, className="android.widget.Button")
-        
-            return user_feed.get_desc() if user_feed.exists() else None
+        return self.device.find(
+            resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
+        ).get_text()
+        # self.device.dump_hierarchy("./postOwnerName.xml")
+        # logger.debug("== _get_post_owner_name() ==")
+        # user_feed = self.device.find(resourceIdMatches=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT)
+        # if user_feed.exists():
+        #     match = user_feed.child().get_desc()
+        #     if match:
+        #         logger.debug(f"Post owner name: {match}")
+        #         return match 
+        # logger.debug(f"Post owner name not found !")
+        # return None
 
     def _get_media_container(self):
         media = self.device.find(resourceIdMatches=ResourceID.CAROUSEL_AND_MEDIA_GROUP)

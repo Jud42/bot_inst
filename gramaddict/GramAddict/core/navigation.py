@@ -143,10 +143,18 @@ def nav_to_post_likers(device, username, my_username):
 def nav_to_feed(device):
     TabBarView(device).navigateToHome()
 
-def elementAppears(element, name):
+def elementAppears(device, element, name):
     start_time = time.time()
+    
     while not element.exists():
         logger.debug(f"Waiting the '{name}' element, appears...")
+        if name == "Option profile":
+            TabBarView(device).navigateToHome()
+            UniversalActions(device)._swipe_points(
+                direction=Direction.UP,
+                delta_y=280,
+            )
+            TabBarView(device).navigateToProfile()
         if (time.time() - start_time) >= 5:
             print("5 seconds have passed. Exiting the loop.")
             return False
@@ -155,12 +163,12 @@ def elementAppears(element, name):
 def nav_to_logout(device):
     logger.debug("== nav_to_logout() ==")
 
-    profile_view = TabBarView(device).navigateToProfile()
+    TabBarView(device).navigateToProfile()
     profile_options = device.find(descriptionMatches="Options", clickable="true")
-    if elementAppears(profile_options, "Option profile"):
+    if elementAppears(device, profile_options, "Option profile"):
         profile_options.click(sleep=SleepTime.DEFAULT)
         scrollable_obj = device.find(scrollable="true")
-        if elementAppears(scrollable_obj, "Srollable"):
+        if elementAppears(device, scrollable_obj, "Srollable"):
             logout_element = device.find(textMatches="Log out", clickable="true")
             while not logout_element.exists():
                 scrollable_obj.scroll(Direction.DOWN)
