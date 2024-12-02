@@ -155,8 +155,8 @@ def elementAppears(device, element, name):
                 delta_y=280,
             )
             TabBarView(device).navigateToProfile()
-        if (time.time() - start_time) >= 5:
-            print("5 seconds have passed. Exiting the loop.")
+        if (time.time() - start_time) >= 10 and not element.exists():
+            logger.debug("5 seconds have passed. Exiting the loop.")
             return False
     return True
 
@@ -193,5 +193,5 @@ def nav_to_logout(device):
             logger.critical("Scroll element not found !")
             return False
     else:
-        logger.critical("Options element not found !")
+        logger.critical("'Option' element not found !")
         return False
