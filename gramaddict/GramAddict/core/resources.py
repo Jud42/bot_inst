@@ -52,8 +52,7 @@ class ResourceID:
         self.FOLLOW_LIST_USERNAME = f"{APP_ID}:id/follow_list_username"
         self.FOLLOW_SHEET_UNFOLLOW_ROW = f"{APP_ID}:id/follow_sheet_unfollow_row"
         self.FOOTER_SPACE = f"{APP_ID}:id/footer_space"
-        #self.GAP_VIEW = f"{APP_ID}:id/gap_view"
-        self.GAP_VIEW = f"{APP_ID}:id/gap_binder_group|{APP_ID}:id/row_feed_profile_header"
+        self.GAP_VIEW = f"{APP_ID}:id/gap_view"
         self.GAP_BINDER_GROUP = f"{APP_ID}:id/gap_binder_group"
         self.IGDS_HEADLINE_BODY = f"{APP_ID}:id/igds_headline_body"
         self.IGDS_HEADLINE_EMPHASIZED_HEADLINE = (
@@ -141,6 +140,7 @@ class ResourceID:
             f"{APP_ID}:id/recommended_user_row_content_identifier"
         )
         self.RECYCLER_VIEW = f"{APP_ID}:id/recycler_view"
+        self.IMAGE_PREVIEW = f"{APP_ID}:id/image_preview"
         self.ROW_PLACE_TITLE = f"{APP_ID}:id/row_place_title"
         self.ROW_LOAD_MORE_BUTTON = f"{APP_ID}:id/row_load_more_button"
         self.ROW_PROFILE_HEADER_EMPTY_PROFILE_NOTICE_CONTAINER = (
@@ -207,8 +207,8 @@ class ResourceID:
         )
         
         self.CAROUSEL_AND_MEDIA_GROUP = f"{self.CAROUSEL_IMAGE}|{self.CAROUSEL_VIDEO_MEDIA_GROUP}|{self.CAROUSEL_VIDEO_IMAGE}|{self.CAROUSEL_MEDIA_GROUP}|{self.CAROUSEL_IMAGE_MEDIA_GROUP}"
-        
-        self.MEDIA_CONTAINER = f"{self.ZOOMABLE_VIEW_CONTAINER}|{self.CAROUSEL_MEDIA_GROUP}|{self.SPONSORED_CONTENT_SERVER_RENDERED_ROOT}|{self.COLLECTION_ROOT_VIEW}|{self.MEDIA_CONTENT_LOCATION}|{self.MEDIA_GROUP}"
+        self.MEDIA_CONTAINER = f"{self.ZOOMABLE_VIEW_CONTAINER}|{self.CAROUSEL_MEDIA_GROUP}|{self.SPONSORED_CONTENT_SERVER_RENDERED_ROOT}|{self.COLLECTION_ROOT_VIEW}|{self.MEDIA_CONTENT_LOCATION}"
+        #self.MEDIA_CONTAINER = f"{self.ZOOMABLE_VIEW_CONTAINER}|{self.CAROUSEL_MEDIA_GROUP}|{self.SPONSORED_CONTENT_SERVER_RENDERED_ROOT}|{self.COLLECTION_ROOT_VIEW}|{self.MEDIA_CONTENT_LOCATION}|{self.MEDIA_GROUP}"
         self.GAP_VIEW_AND_FOOTER_SPACE = f"{self.GAP_VIEW}|{self.FOOTER_SPACE}"
         self.BLOCK_POPUP = f"{self.DIALOG_CONTAINER}|{self.DIALOG_ROOT_VIEW}"
 

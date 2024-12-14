@@ -19,6 +19,9 @@ follow_private_or_empty: false
 ## Filters for reinteraction after liked
 skip_if_already_liked: false
 
+## Filters for hashtag-posts type
+hashtag_posts_reels: true
+
 ## Filters on profile stats
 # min_followers: 50
 # max_followers: 2500
@@ -38,28 +41,28 @@ skip_if_already_liked: false
 
 ## Filters for enabling comments
 # Action specific
-comment_hashtag_likers_top: true
-comment_hashtag_likers_recent: true
-comment_hashtag_posts_top: true
-comment_hashtag_posts_recent: true
-comment_place_likers_top: true
-comment_place_likers_recent: true
-comment_place_posts_top: true
-comment_place_posts_recent: true
-comment_blogger_followers: true
-comment_blogger_following: true
-comment_blogger_post_likers: true
-comment_blogger: false
-comment_interact_usernames: true
-comment_interact_from_file: true
-comment_feed: false
+# comment_hashtag_likers_top: true
+# comment_hashtag_likers_recent: true
+# comment_hashtag_posts_top: true
+# comment_hashtag_posts_recent: true
+# comment_place_likers_top: true
+# comment_place_likers_recent: true
+# comment_place_posts_top: true
+# comment_place_posts_recent: true
+# comment_blogger_followers: true
+# comment_blogger_following: true
+# comment_blogger_post_likers: true
+# comment_blogger: false
+# comment_interact_usernames: true
+# comment_interact_from_file: true
+# comment_feed: false
 # Content specific
-comment_photos: true
-comment_videos: true
-comment_carousels: true
+# comment_photos: true
+# comment_videos: true
+# comment_carousels: true
 
 ## Filters for sending PM
-pm_to_private_or_empty: true
+#pm_to_private_or_empty: true
 
 ## Filters on number of post likers
 #min_likers: 1

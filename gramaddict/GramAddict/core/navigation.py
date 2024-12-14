@@ -82,13 +82,14 @@ def nav_to_blogger(device, username, current_job):
     return True
 
 
-def nav_to_hashtag_or_place(device, target, current_job):
+def nav_to_hashtag_or_place(device, target, current_job, post_type):
     logger.debug("nav_to_hashtag_or_place()")
     """navigate to hashtag/place/feed list"""
     search_view = TabBarView(device).navigateToSearch()
     if not search_view.navigate_to_target(target, current_job):
         return False
 
+    hashtag_posts_reels = post_type
     TargetView = HashTagView if current_job.startswith("hashtag") else PlacesView
 
     if current_job.endswith("recent"):
@@ -105,10 +106,15 @@ def nav_to_hashtag_or_place(device, target, current_job):
                 return False
 
     result_view = TargetView(device)._getRecyclerView()
-    FistImageInView = TargetView(device)._getFistImageView(result_view)
+
+    # feature nav reels: temp
+    if hashtag_posts_reels:
+        TargetView(device)._navToReels(result_view)
+    
+    FistImageInView = TargetView(device)._getFistImageView(result_view, hashtag_posts_reels)
     if FistImageInView.exists():
         logger.info(f"Opening the first result for {target}.")
-        FistImageInView.click()
+        FistImageInView.click(sleep=SleepTime.DEFAULT)
         return True
     else:
         logger.info(

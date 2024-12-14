@@ -297,11 +297,12 @@ def handle_likers(
     interaction,
     is_follow_limit_reached,
 ):
+    hashtag_posts_reels = profile_filter.hashtag_posts_reels()
     if (
         current_job == "blogger-post-likers"
         and not nav_to_post_likers(device, target, session_state.my_username)
         or current_job != "blogger-post-likers"
-        and not nav_to_hashtag_or_place(device, target, current_job)
+        and not nav_to_hashtag_or_place(device, target, current_job, hashtag_posts_reels)
     ):
         return False
     
@@ -490,6 +491,7 @@ def handle_posts(
         "Skipped post limit: {}",
         5,
     )
+    hashtag_posts_reels = profile_filter.hashtag_posts_reels()
     if current_job == "feed":
         if scraping_file:
             logger.warning(
@@ -504,7 +506,7 @@ def handle_posts(
         )
         count = 0
         PostsViewList(device)._refresh_feed()
-    elif not nav_to_hashtag_or_place(device, target, current_job):
+    elif not nav_to_hashtag_or_place(device, target, current_job, hashtag_posts_reels):
         return
 
     post_description = ""
@@ -525,7 +527,7 @@ def handle_posts(
             is_ad,
             is_hashtag,
             has_tags,
-        ) = post_view_list._check_if_last_post(post_description, current_job)
+        ) = post_view_list._check_if_last_post(post_description, current_job, hashtag_posts_reels)
         print("== HANDLE_POSTS je sors de _check_if_last_post ==")
         has_likers, number_of_likers, already_liked = post_view_list._find_likers_container()
         #already_liked, _ = opened_post_view._is_post_liked() if has_likers else False, _

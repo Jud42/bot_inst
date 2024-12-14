@@ -21,7 +21,7 @@ debug: true
 # kill-atx-agent: false
 # restart-atx-agent: false
 disable-block-detection: false
-disable-filters: true
+disable-filters: false
 # dont-type: false
 # # scrape-to-file: scraped.txt
 # total-crashes-limit: 5
@@ -37,10 +37,10 @@ disable-filters: true
 # blogger-followers: beyonce
 # blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-blogger: dolce_lausanne
+# blogger: dolce_lausanne
 # hashtag-likers-top: [ jordan, puma ]
 # hashtag-likers-recent: [ jordan, puma ]
-# hashtag-posts-top: [ puma ]
+hashtag-posts-top: [ puma ]
 # hashtag-posts-recent: [ champoulausanne ]
 # place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]

@@ -51,6 +51,7 @@ FIELD_MAX_LIKERS = "max_likers"
 FIELD_MUTUAL_FRIENDS = "mutual_friends"
 
 FIELD_SKIP__IF_ALREADY_LIKED = "skip_if_already_liked"
+FIELD_HASHTAG_POSTS_REELS = "hashtag_posts_reels"
 
 IGNORE_CHARSETS = ["MATHEMATICAL"]
 
@@ -224,6 +225,17 @@ class Filter:
                 
             return skip
         return True
+    
+    def hashtag_posts_reels(self):
+        if self.conditions is not None:
+            skip = self.conditions.get(
+                    FIELD_HASHTAG_POSTS_REELS, False
+                )
+            if not skip:
+                logger.debug("Filters: The option 'hashtag_posts_reels' is enabled.")
+                
+            return skip
+        return False
 
     def check_profile(self, device, username):
         """

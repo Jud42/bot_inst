@@ -235,9 +235,15 @@ class HashTagView:
             logger.debug("RecyclerView doesn't exists.")
         return obj
 
-    def _getFistImageView(self, recycler):
-        obj = recycler.child(
-            resourceIdMatches=ResourceID.IMAGE_BUTTON,
+    def _getFistImageView(self, recycler, reels):
+
+        obj = (
+            recycler.child(
+                resourceIdMatches=ResourceID.IMAGE_PREVIEW,
+            ) if reels else 
+            recycler.child(
+                resourceIdMatches=ResourceID.IMAGE_BUTTON,
+            )
         )
         if obj.exists(Timeout.LONG):
             logger.debug("First image in view exists.")
@@ -245,20 +251,28 @@ class HashTagView:
             logger.debug("First image in view doesn't exists.")
         return obj
     
-    def _navToReels(self):
+    def _navToReels(self, recycler):
         field_scroll = self.device.find(resourceIdMatches="com.instagram.android:id/scrollable_tab_layout", scrollable="true")
         reels_obj = self.device.find(className="android.widget.TabWidget", textMatches="Reels", clickable="true")
+        audio_obj = self.device.find(className="android.widget.TabWidget", textMatches="Audio", clickable="true")
+        shimmer_content = recycler.child(index=0, resourceIdMatches="com.instagram.android:id/shimmer_content")
+        no_results = recycler.child(index=0, resourceIdMatches="com.instagram.android:id/row_no_results_textview")
         if field_scroll.exists():
             while not reels_obj.exists():
                 field_scroll.scroll(Direction.RIGHT)
             reels_obj.click(sleep=SleepTime.DEFAULT)
+            start_time = time.time()
+            while shimmer_content.exists():
+                if (time.time() - start_time) > 7:
+                    audio_obj.click(sleep=SleepTime.DEFAULT)
+                    self._navToReels(recycler)
         else:
-            print("element field_scroll doesn't found !")
+            logger.debug(" from '_navToReels()' element field_scroll doesn't found !")
 
 
     def _getRecentTab(self):
         #self.device.dump_hierarchy("./tagRecentTab.xml")
-        self._navToReels()
+        #self._navToReels()
         obj = self.device.find(
             className=ClassName.TEXT_VIEW,
             textMatches=case_insensitive_re(TabBarText.RECENT_CONTENT_DESC),
@@ -502,13 +516,12 @@ class PostsViewList:
             logger.info(
                 "Scroll down to see next post.", extra={"color": f"{Fore.GREEN}"}
             )
-
             gap_view_obj = self.device.find(index=-1, resourceIdMatches=containers_gap)
             obj1 = None
             for _ in range(3):
+                print(f"========= gap view exists ? : {gap_view_obj.exists()} ========")
                 if not gap_view_obj.exists():
                     logger.debug("Can't find the gap obj, scroll down a little more.")
-
                     PostsViewList(self.device).swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
                     gap_view_obj = self.device.find(resourceIdMatches=containers_gap)
                     if not gap_view_obj.exists():
@@ -517,20 +530,19 @@ class PostsViewList:
                         break
                 else:
                     media = self.device.find(resourceIdMatches=containers_content)
-                    logger.debug("==media exists==") if media.exists() else None
                     if (
-                        media.exists() and
                         gap_view_obj.get_bounds()["bottom"]
                         < media.get_bounds()["bottom"]
                     ):
-                        logger.debug("gap bottom < media bottom")
                         PostsViewList(self.device).swipe_to_fit_posts(
                             SwipeTo.HALF_PHOTO
                         )
-                        #break
-                        continue
+                        #continue
+                        return True
                     suggested = self.device.find(resourceIdMatches=suggested_users)
                     if suggested.exists():
+                        print(f"========= suggested exist ========")
+
                         for _ in range(2):
                             PostsViewList(self.device).swipe_to_fit_posts(
                                 SwipeTo.HALF_PHOTO
@@ -553,8 +565,9 @@ class PostsViewList:
                 )
                 * 1
                 / 3
-            ) if containers_content.exists() else 0
+            )
 
+            print(f"========= swipe points ========")
             self.device.swipe_points(
                 displayWidth / 2,
                 obj1 - 5,
@@ -572,28 +585,22 @@ class PostsViewList:
         nb_likes = 0
         already_liked = False
         button_like_obj = self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE)
-        like_count_obj = False
+        like_exist = False
         if button_like_obj.exists():
             nb_obj = button_like_obj.count_items()
-            logger.debug(f"{nb_obj} elements with the same ID found.")
-            if nb_obj == 1:
-                already_liked = button_like_obj.get_selected()
-                like_count_obj = button_like_obj.sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
-                nb_likes = like_count_obj.get_text()
-            else:
-                # UniversalActions(self.device)._swipe_points(
-                #     direction=Direction.DOWN, delta_y=80
-                # )
-                self.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
-                self._find_likers_container()
-                # already_liked = button_like_obj[nb_obj - 1].get_selected()
-                # like_count_obj = button_like_obj[nb_obj - 1].sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
-                # nb_likes = like_count_obj.get_text()
-            logger.debug(f"Like exist: {like_count_obj.exists()}\nNumber of like: {nb_likes}\nAlready liked: {already_liked}")
-            return like_count_obj.exists(), nb_likes, already_liked
+            logger.debug(f"Number of Like Button detected: {nb_obj}")
+            #if nb_obj == 1:
+            already_liked = button_like_obj.get_selected()
+            like_exist = button_like_obj.sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
+            nb_likes = like_exist.get_text() if like_exist.exists() else 0
+            like_exist = True if nb_likes else False
+            logger.debug(f"Like exist: {like_exist}; Number of like: {nb_likes}; Already liked: {already_liked}")
+            #else:
+            #    logger.critical(f"Many Like button detected !")
+            return like_exist, nb_likes, already_liked
         else:
             logger.critical(f"Like button not found !")
-            return like_count_obj, nb_likes, already_liked  
+            return like_exist, nb_likes, already_liked  
 
     def _get_number_of_likers(self, likes_view):
         likes = 0
@@ -715,12 +722,17 @@ class PostsViewList:
         return self.has_tags
 
     def _check_if_last_post(
-        self, last_description, current_job
+        self, last_description, current_job, reels
     ) -> Tuple[bool, str, str, bool, bool, bool]:
         """check if that post has been just interacted"""
         universal_actions = UniversalActions(self.device)
-        username, is_ad, is_hashtag = PostsViewList(self.device)._post_owner(
-            current_job, Owner.GET_NAME
+        username, is_ad, is_hashtag = (
+            PostsViewList(self.device)._post_owner_reels(
+                current_job, Owner.GET_NAME
+            ) if reels else
+            PostsViewList(self.device)._post_owner(
+                current_job, Owner.GET_NAME
+            )
         )
         print(
             f"value for username: {username}\n"
@@ -729,68 +741,69 @@ class PostsViewList:
         )
         has_tags = self._has_tags()
         while True:
-            """
-            post_description = self.device.find(
-                index=-1,
-                resourceIdMatches=ResourceID.ROW_FEED_TEXT,
-                textStartsWith=username,
-            )
-            """
-            post_description = self.device.find(
-                classNameMatches=ClassName.TEXTVIEW_IGTEXTLAYOUTVIEW,
-                textStartsWith=username,
-            )
+            if reels:
+                self.device.dump_hierarchy("./reelFeature.xml")
+                time.sleep(5)
+                universal_actions._swipe_points(
+                            direction=Direction.DOWN, delta_y=200
+                        )
+                continue
+                """find descrition for reels"""
 
-            if not post_description.exists() and post_description.count_items() >= 1:
-                text = post_description.get_text()
-                print(f"== dans la condition if not post_ text == {text}")
-                post_description = self.device.find(
-                    classNameMatches=ClassName.TEXTVIEW_IGTEXTLAYOUTVIEW,
-                    text=text,
-                )
-
-            if post_description.exists():
-                print(f"== dans la condition if post_ exists == {post_description.get_text()}")
-                logger.debug("Description found!")
-                new_description = post_description.get_text().upper()
-                if new_description != last_description:
-                    return False, new_description, username, is_ad, is_hashtag, has_tags
-                logger.info(
-                    "This post has the same description and author as the last one."
-                )
-                return True, new_description, username, is_ad, is_hashtag, has_tags
             else:
-                print(f"== si les deux conditions précédemment sont faux ==")
-                print(f"post_description count => {post_description.count_items()}")
-                gap_view_obj = self.device.find(resourceId=ResourceID.GAP_VIEW)
-                feed_composer = self.device.find(
-                    resourceId=ResourceID.FEED_INLINE_COMPOSER_BUTTON_TEXTVIEW
+                """
+                post_description = self.device.find(
+                    index=-1,
+                    resourceIdMatches=ResourceID.ROW_FEED_TEXT,
+                    textStartsWith=username,
                 )
-                if gap_view_obj.exists() and gap_view_obj.get_bounds()["bottom"] < (
-                    self.device.get_info()["displayHeight"] / 3
-                ):
-                    universal_actions._swipe_points(
-                        direction=Direction.DOWN, delta_y=200
+                """
+                post_description = self.device.find(
+                    resourceId=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT,
+                    textStartsWith=username,
+                )
+                if (post_description.exists() or
+                    not post_description.exists() and post_description.count_items() >= 1):
+                    if post_description.child().count_items() > 1:
+                        logger.debug(f"Description found: {post_description.get_text()}")
+                        new_description = post_description.get_text().upper()
+                        if new_description != last_description:
+                            return False, new_description, username, is_ad, is_hashtag, has_tags
+                        logger.info(
+                            "This post has the same description and author as the last one."
+                        )
+                        return True, new_description, username, is_ad, is_hashtag, has_tags 
+                    
+                else:
+                    gap_view_obj = self.device.find(resourceId=ResourceID.GAP_VIEW)
+                    feed_composer = self.device.find(
+                        resourceId=ResourceID.FEED_INLINE_COMPOSER_BUTTON_TEXTVIEW
                     )
-                    continue
-                row_feed_profile_header = self.device.find(
-                    resourceId=ResourceID.ROW_FEED_PROFILE_HEADER
-                )
-                if row_feed_profile_header.count_items() > 1:
-                    logger.info("This post hasn't the description...")
-                    return False, "", username, is_ad, is_hashtag, has_tags
-                profile_header_is_above = row_feed_profile_header.is_above_this(
-                    gap_view_obj if gap_view_obj.exists() else feed_composer
-                )
-                if profile_header_is_above is not None:
-                    if not profile_header_is_above:
+                    if gap_view_obj.exists() and gap_view_obj.get_bounds()["bottom"] < (
+                        self.device.get_info()["displayHeight"] / 3
+                    ):
+                        universal_actions._swipe_points(
+                            direction=Direction.DOWN, delta_y=200
+                        )
+                        continue
+                    row_feed_profile_header = self.device.find(
+                        resourceId=ResourceID.ROW_FEED_PROFILE_HEADER
+                    )
+                    if row_feed_profile_header.count_items() > 1:
                         logger.info("This post hasn't the description...")
                         return False, "", username, is_ad, is_hashtag, has_tags
+                    profile_header_is_above = row_feed_profile_header.is_above_this(
+                        gap_view_obj if gap_view_obj.exists() else feed_composer
+                    )
+                    if profile_header_is_above is not None:
+                        if not profile_header_is_above:
+                            logger.info("This post hasn't the description...")
+                            return False, "", username, is_ad, is_hashtag, has_tags
 
-                logger.debug(
-                    f"Can't find the description of {username}'s post, try to swipe a little bit down."
-                )
-                universal_actions._swipe_points(direction=Direction.DOWN, delta_y=200)
+                    logger.debug(
+                        f"Can't find the description of {username}'s post, try to swipe a little bit down."
+                    )
+                    universal_actions._swipe_points(direction=Direction.DOWN, delta_y=200)
 
     def _if_action_bar_is_over_obj_swipe(self, obj):
         """do a swipe of the amount of the action bar"""
@@ -825,6 +838,17 @@ class PostsViewList:
             random_sleep(inf=5, sup=8, modulable=False)
         else:
             UniversalActions(self.device)._reload_page()
+
+    def _post_owner_reels(self, current_job, mode: Owner, username=None):
+        is_ad = False
+        is_hashtag = False
+        author_component = self.device.find(
+            resourceIdMatches="com.instagram.android:id/clips_author_info_component"
+        )
+        if author_component.exists() and author_component.child(index=0).exists():
+            profile_picture_desc = author_component.child(index=0).get_desc()
+            username = profile_picture_desc.split("of ")[-1]
+            return username, is_ad, is_hashtag
 
     def _post_owner(self, current_job, mode: Owner, username=None):
         """returns a tuple[var, bool, bool]"""
@@ -921,7 +945,6 @@ class PostsViewList:
         
     def _get_post_owner_obj(self):
         logger.debug("== _get_post_owner_obj() ==")
-        
         owner_obj = self.device.find(
                 resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
             )#.child(index=0, className="android.view.ViewGroup", clickable="true")
@@ -940,7 +963,6 @@ class PostsViewList:
         return self.device.find(
             resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
         ).get_text()
-        # self.device.dump_hierarchy("./postOwnerName.xml")
         # logger.debug("== _get_post_owner_name() ==")
         # user_feed = self.device.find(resourceIdMatches=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT)
         # if user_feed.exists():
@@ -1034,7 +1056,7 @@ class PostsViewList:
                     mode=LikeMode.SINGLE_CLICK, skip_media_check=True
                 )
         elif mode == LikeMode.SINGLE_CLICK:
-            like_button_exists, _ = self._find_likers_container()
+            like_button_exists = self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE)
             if like_button_exists:
                 logger.info("Clicking on the little heart ❤️.")
                 self.device.find(
