@@ -21,7 +21,7 @@ debug: true
 # kill-atx-agent: false
 # restart-atx-agent: false
 disable-block-detection: false
-disable-filters: false
+disable-filters: true
 # dont-type: false
 # # scrape-to-file: scraped.txt
 # total-crashes-limit: 5
@@ -40,7 +40,7 @@ disable-filters: false
 # blogger: dolce_lausanne
 # hashtag-likers-top: [ jordan, puma ]
 # hashtag-likers-recent: [ jordan, puma ]
-hashtag-posts-top: [ puma ]
+hashtag-posts-top: [ jordan ]
 # hashtag-posts-recent: [ champoulausanne ]
 # place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]

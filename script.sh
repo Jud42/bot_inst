@@ -20,14 +20,14 @@ show_help() {
 case "$1" in
     --up)
         echo "Starting Docker containers..."
-        sudo docker compose up -d
+        sudo docker-compose up -d
 	    echo "restart adb server..."
 	    adb kill-server > /dev/null 2>&1
 	    adb -a server start &>/dev/null
         ;;
     --down)
         echo "Stopping and removing Docker containers..."
-        sudo docker compose down
+        sudo docker-compose down
         ;;
     --devices)
         echo "Listing connected devices with adb..."
