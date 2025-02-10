@@ -10,7 +10,7 @@ from subprocess import PIPE, run
 from time import sleep
 from typing import Optional
 
-import uiautomator2
+import uiautomator2, re
 
 from GramAddict.core.utils import random_sleep
 
@@ -128,6 +128,37 @@ class DeviceFacade:
         except uiautomator2.JSONRPCError as e:
             raise DeviceFacade.JsonRpcError(e)
         return DeviceFacade.View(view=view, device=self.deviceV2)
+    
+
+    def find_element_by_xpath(xpath):
+        """
+        Réimplémente find_element_by_xpath en se basant sur la fonction `find` existante.
+        Convertit l'XPath en arguments compatibles avec `find`.
+
+        :param xpath: Chemin XPath vers l'élément UI.
+        :return: Instance de DeviceFacade.View correspondant à l'élément trouvé.
+        """
+        # Expressions régulières pour extraire les attributs d'un XPath
+        attr_patterns = {
+            "resourceId": r"@resource-id='([^']*)'",
+            "text": r"@text='([^']*)'",
+            "className": r"@class='([^']*)'",
+        }
+
+        # Extraction des attributs
+        find_kwargs = {}
+        for attr, pattern in attr_patterns.items():
+            match = re.search(pattern, xpath)
+            if match:
+                find_kwargs[attr] = match.group(1)
+
+        # Extraction de l'index si spécifié dans XPath (ex: "(//android.widget.Button)[2]")
+        index_match = re.search(r"\[(\d+)\]$", xpath)
+        index = int(index_match.group(1)) - 1 if index_match else None  # UIAutomator utilise un index basé sur 0
+
+        # Appel à la fonction find
+        return find(index=index, **find_kwargs)
+
 
     def back(self, modulable: bool = True):
         logger.debug("Press back button.")

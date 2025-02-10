@@ -14,7 +14,7 @@ skip_non_business: false
 skip_following: false
 skip_follower: false
 skip_if_link_in_bio: false
-follow_private_or_empty: false
+#follow_private_or_empty: false
 
 ## Filters for reinteraction after liked
 skip_if_already_liked: false
@@ -52,14 +52,14 @@ hashtag_posts_reels: true
 # comment_blogger_followers: true
 # comment_blogger_following: true
 # comment_blogger_post_likers: true
-# comment_blogger: false
+# comment_blogger: true
 # comment_interact_usernames: true
 # comment_interact_from_file: true
 # comment_feed: false
 # Content specific
-# comment_photos: true
-# comment_videos: true
-# comment_carousels: true
+comment_photos: true
+comment_videos: true
+comment_carousels: true
 
 ## Filters for sending PM
 #pm_to_private_or_empty: true

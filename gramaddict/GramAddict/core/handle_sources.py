@@ -20,6 +20,7 @@ from GramAddict.core.utils import (
     inspect_current_view,
     random_choice,
     random_sleep,
+    checkPopupAddNotesOnPosts,
 )
 from GramAddict.core.views import (
     FollowingView,
@@ -314,8 +315,8 @@ def handle_likers(
         flag, post_description, _, _, _, _ = PostsViewList(device)._check_if_last_post(
             post_description, current_job
         )
-        has_likers, number_of_likers = PostsViewList(device)._find_likers_container()
-        print(f"has_likers: {has_likers}\nnumber of likers = {number_of_likers}")
+        has_likers, number_of_likers, already_liked = PostsViewList(device)._find_likers_container()
+        print(f"has_likers: {has_likers}\nnumber of likers = {number_of_likers}\nalready liked = {already_liked}")
         print("== Within loop in HANDLE_LIKERS Function after _find_likers_container ==")
 
         if flag:
@@ -492,6 +493,7 @@ def handle_posts(
         5,
     )
     hashtag_posts_reels = profile_filter.hashtag_posts_reels()
+    count_feed_limit = 0
     if current_job == "feed":
         if scraping_file:
             logger.warning(
@@ -504,11 +506,10 @@ def handle_posts(
             "Feed interact count: {}",
             10,
         )
-        count = 0
         PostsViewList(device)._refresh_feed()
     elif not nav_to_hashtag_or_place(device, target, current_job, hashtag_posts_reels):
         return
-
+    count = 0
     post_description = ""
     likes_failed = 0
     nr_same_post = 0
@@ -519,6 +520,7 @@ def handle_posts(
     post_view_list = PostsViewList(device)
     opened_post_view = OpenedPostView(device)
     while True:
+        checkPopupAddNotesOnPosts(device)
         print("== JE SUIS HANDLE_POSTS ==")
         (
             is_same_post,
@@ -529,7 +531,7 @@ def handle_posts(
             has_tags,
         ) = post_view_list._check_if_last_post(post_description, current_job, hashtag_posts_reels)
         print("== HANDLE_POSTS je sors de _check_if_last_post ==")
-        has_likers, number_of_likers, already_liked = post_view_list._find_likers_container()
+        has_likers, number_of_likers, already_liked = post_view_list._find_likers_container(hashtag_posts_reels)
         #already_liked, _ = opened_post_view._is_post_liked() if has_likers else False, _
         print("== HANDLE_POSTS CLOSE COMMENT ==")
         if not (is_ad or is_hashtag):
@@ -603,12 +605,12 @@ def handle_posts(
                         ):
                             if has_tags:
                                 print("==_like_in_post single click: if has_tags")
-                                post_view_list._like_in_post_view(LikeMode.SINGLE_CLICK)
+                                post_view_list._like_in_post_view(LikeMode.SINGLE_CLICK, reels=hashtag_posts_reels)
                             else:
                                 print("==_like_in_post double click: else")
-                                post_view_list._like_in_post_view(LikeMode.DOUBLE_CLICK)
+                                post_view_list._like_in_post_view(LikeMode.DOUBLE_CLICK, reels=hashtag_posts_reels)
                             UniversalActions.detect_block(device)
-                            liked = post_view_list._check_if_liked()
+                            liked = post_view_list._check_if_liked(reels=hashtag_posts_reels)
                             if not liked:
                                 post_view_list._like_in_post_view(
                                     LikeMode.SINGLE_CLICK, already_watched=True
@@ -617,11 +619,14 @@ def handle_posts(
                                 liked = post_view_list._check_if_liked()
                             if liked:
                                 session_state.totalLikes += 1
-                                if current_job == "feed":
+                                if current_job == "feed" or hashtag_posts_reels:
                                     count += 1
+                                    if hashtag_posts_reels and count == int(self.args.likes_count):
+                                        logger.info("Limit reached, finish.")
+                                        break
                                     logger.info(
                                         f"Interacted feed bloggers: {count}/{count_feed_limit}"
-                                    )
+                                    ) if current_job == "feed" else None
                                     likes_limit = self.session_state.check_limit(
                                         limit_type=self.session_state.Limit.LIKES
                                     )
@@ -634,7 +639,7 @@ def handle_posts(
                                     if likes_limit or success_limit or total_limit:
                                         logger.info("Limit reached, finish.")
                                         break
-                                    if count >= count_feed_limit:
+                                    if current_job == "feed" and count >= count_feed_limit:
                                         logger.info(
                                             f"Interacted {count} bloggers in feed, finish."
                                         )
@@ -666,9 +671,18 @@ def handle_posts(
         if likes_failed == 10:
             logger.warning("You failed to do 10 likes! Soft-ban?!")
             return
-        #post_view_list.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
-        post_view_list.swipe_to_fit_posts(SwipeTo.NEXT_POST)
-    TabBarView(device).navigateToProfile()
+        if hashtag_posts_reels:
+            if device.deviceV2(resourceId="com.instagram.android:id/clips_viewer_view_pager", scrollable=True):
+                device.deviceV2.swipe_points([(100, 500), (100, 50)])
+            else:
+                break
+        else:
+            #post_view_list.swipe_to_fit_posts(SwipeTo.HALF_PHOTO)
+            post_view_list.swipe_to_fit_posts(SwipeTo.NEXT_POST)
+    checkPopupAddNotesOnPosts(device)
+    device.back()
+    device.deviceV2(resourceId="com.instagram.android:id/profile_tab").click()
+    # TabBarView(device).navigateToProfile()
 
 
 def handle_followers(

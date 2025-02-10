@@ -295,6 +295,7 @@ class ActionUnfollowFollowers(Plugin):
         posts_end_detector.notify_new_page()
         prev_screen_iterated_followings = []
         while True:
+            
             screen_iterated_followings = []
             logger.info("Iterate over visible followings.")
             user_list = device.find(
@@ -327,7 +328,8 @@ class ActionUnfollowFollowers(Plugin):
                         UnfollowRestriction.FOLLOWED_BY_SCRIPT,
                         UnfollowRestriction.FOLLOWED_BY_SCRIPT_NON_FOLLOWERS,
                     ]:
-                        following_status = storage.get_following_status(username)
+                        following_status = FollowingStatus.FOLLOWED #storage.get_following_status(username)
+
                         _, last_interaction = storage.check_user_was_interacted(
                             username
                         )

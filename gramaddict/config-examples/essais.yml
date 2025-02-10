@@ -7,8 +7,8 @@
 ##############################################################################
 # General Configuration
 ##############################################################################
-username: [ludi._ltc, anastasia.lktp] #[ludi._ltc, anastasia.lktp, nicoox_x_, maria._gmo, mariamaydu6, jamyliban, ma.xime8092, clairecommelclair, dar.debile, premierbotte, tamere3679, deuxiemebotte, smittymechant, djlilkevin]
-password: [nouveaumotdepasse, denis18] #[nouveaumotdepasse, denis18, vivelejapon, mdpdejosh, allerlagrece, allerlelivan, zeubghumid, lemotdepasse, testdemotdepasse, premierbotte360\\, premierbotte360\\@, lemotdepassedudeuxiemebotte, mdpdumechant, jesaispasquoimettre69]
+username: [dar.debile, deuxiemebotte, premierbotte, tamere3679, fnouc5, dar.debile, deuxiemebotte, clairecommelclair, marvinmaydu6, smittymechant, djlilkevin, denis777633, kevinpo821, jes_apellegroot, jennabdhdu16, jugigo35, kevindu12letroll, posterbruno, traeyoungedits, hawkstop1, ramz.yzou, jamyliban, ma.xime8092, mariamaydu6, totolezozo., wallpaperinpinterest., hartbest71, giannisfreak100, lafournaisedu19, cesarrevient, denisschrogez, allerbasketjapon, fleurejolie20, pro.draw5, grocon.10]
+password: [testdemotdepasse, lemotdepassedudeuxiemebotte, premierbotte360\\\\, premierbotte360\\\\@, testdemotdepasse, testdemotdepasse, lemotdepassedudeuxiemebotte, lemotdepasse, mdpinchallah, mdpdumechant, jesaispasquoimettre69, lemotdepasseduquatriemebotte, motdepasseduscam, jechange667ekip/, lemotdepassedejenna, jaja567, mdpdekiki, catchandposter, traeyoung1, allezleshawks, lesrazmoquettes, allerlelivan, zeubghumid, allerlagrece, totolerigolo, quoicoubeh, mdpdejosh, mdpdegigi, fournaise19, nouveaumotdepasse, denis18, vivelejapon, laroserouge, ledessin, lecaca]
 # device: put_your_device_id_there # 'adb devices' in the console to know it.  It's needed only if you have more than 1 device connected
 app-id: com.instagram.android
 use-cloned-app: false
@@ -37,10 +37,10 @@ disable-filters: false
 # blogger-followers: beyonce
 # blogger-following: [ fentybeauty, boobamedia ]
 # blogger-post-likers: [ username1, username2 ]
-blogger: neymarjr
+blogger: edit_forballers
 # hashtag-likers-top: [ jordan, puma ]
 # hashtag-likers-recent: [ jordan, puma ]
-# hashtag-posts-top: [ lausannequartiercomedyclub ]
+# hashtag-posts-top: [ puma ]
 # hashtag-posts-recent: [ champoulausanne ]
 # place-posts-top: [ switzerland, france ]
 # place-posts-recent: [ place1, place2 ]
@@ -51,16 +51,21 @@ blogger: neymarjr
 # feed: 2-5 # is the number of likes you will give in feed
 
 # ## Special modifier for jobs and sources
-watch-video-time: 2-4
+watch-video-time: 10-15
 watch-photo-time: 3-4
 can-reinteract-after: 0 # the amount of hours that have to pass from the last interaction
 # delete-interacted-users: true
 
 # ## Unfollow (unfollow jobs)
-# unfollow: 2
+# unfollow: 10-20
 # unfollow-any: 10-20
-unfollow-non-followers: 8
-# unfollow-any-non-followers: 10-20timeout=5
+# unfollow-non-followers: 10-20
+# unfollow-any-non-followers: 10-20
+# unfollow-any-followers: 10-20
+# unfollow-from-file: [usernames1.txt 7-15, usernames2.txt 6]
+
+# ## Special modifier for unfollow jobs
+# sort-followers-newest-to-oldest: false
 # unfollow-delay: 15
 
 # ## Remove followers (active jobs)
@@ -81,18 +86,18 @@ unfollow-non-followers: 8
 # # Source Limits
 # ##############################################################################
 
-#interactions-count: 5 # for blogger and : following,followers,post-likers (nb account you wish to interact)
-likes-count: 0
+interactions-count: 5 # for blogger: following,followers,post-likers (nb account you wish to interact)
+likes-count: 5
 likes-percentage: 100
 #stories-count: 5
 #stories-percentage: 100
 #carousel-count: 2
 #carousel-percentage: 100
 ##max-comments-pro-user: 1-2
-comment-percentage: 100
+#comment-percentage: 100
 # # pm-percentage: 30-40
 interact-percentage: 100
-follow-percentage: 100
+#follow-percentage: 100
 #follow-limit: 2
 # skipped-list-limit: 10-15
 # skipped-posts-limit: 5
@@ -108,7 +113,7 @@ follow-percentage: 100
 # total-watches-limit: 120-150
 # total-successful-interactions-limit: 120-150
 # total-interactions-limit: 280-300
-# total-comments-limit: 10-20
+#total-comments-limit: 10-20
 # total-pm-limit: 3-5
 # total-scraped-limit: 100-150
 

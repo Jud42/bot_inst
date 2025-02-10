@@ -29,6 +29,16 @@ from GramAddict.core.utils import (
     get_value,
     random_sleep,
     save_crash,
+    checkSamsungPass,
+    checkSaveYourLoginInfo,
+    checkPopupAlloIgToSendNotif,
+    checkPopupReviewWhether,
+    checkPopupAllowAccessContacts,
+    checkPopupSetupOnNewDevice,
+    checkPopupAllowToAccessLocation,
+    checkPopupOpenYourLocationSettings,
+    checkPopupChooseProcessAds,
+    checkPopupRefresh,
 )
 
 logger = logging.getLogger(__name__)
@@ -271,7 +281,6 @@ class HashTagView:
 
 
     def _getRecentTab(self):
-        #self.device.dump_hierarchy("./tagRecentTab.xml")
         #self._navToReels()
         obj = self.device.find(
             className=ClassName.TEXT_VIEW,
@@ -576,24 +585,43 @@ class PostsViewList:
             )
             return True
 
-    def _find_likers_container(self):
+    def _find_likers_container(self, reels=False):
         logger.debug("== _find_likers_container() ==")
         # universal_actions = UniversalActions(self.device)
         # containers_gap = ResourceID.GAP_VIEW_AND_FOOTER_SPACE
         # media_container = ResourceID.MEDIA_CONTAINER
         # likes = 0
-        nb_likes = 0
-        already_liked = False
-        button_like_obj = self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE)
         like_exist = False
-        if button_like_obj.exists():
+        nb_likes = ""
+        already_liked = False
+        button_like_obj = (
+            self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE) if not reels
+            else self.device.find(resourceId="com.instagram.android:id/like_button")
+        )
+
+        if button_like_obj.exists() and reels:
+            already_liked = button_like_obj.get_selected()
+            like_elem = button_like_obj.sibling(descriptionContains="View likes")
+            if like_elem.exists() and "The like number is" in like_elem.get_desc():
+                nb_likes = like_elem.get_desc().split("is")[-1]
+                like_exist = True
+                return like_exist, nb_likes, already_liked
+            elif like_elem.exists():
+                return like_exist, nb_likes, already_liked
+            else:
+                logger.critical("Likes View not found from Reels post")
+                return like_exist, nb_likes, already_liked
+        elif button_like_obj.exists():
             nb_obj = button_like_obj.count_items()
             logger.debug(f"Number of Like Button detected: {nb_obj}")
             #if nb_obj == 1:
             already_liked = button_like_obj.get_selected()
-            like_exist = button_like_obj.sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
-            nb_likes = like_exist.get_text() if like_exist.exists() else 0
-            like_exist = True if nb_likes else False
+            # like_exist = button_like_obj.sibling(resourceId=ResourceID.ROW_FEED_LIKE_COUNT)
+            obj_sibling_like = self.device.deviceV2.xpath(
+                "//*[@resource-id='com.instagram.android:id/row_feed_button_like']/../following-sibling::*[1]"
+            )
+            nb_likes = obj_sibling_like.get_text() if obj_sibling_like.exists and obj_sibling_like.get_text() != "" else "0"
+            like_exist =  True if nb_likes != 0 else False
             logger.debug(f"Like exist: {like_exist}; Number of like: {nb_likes}; Already liked: {already_liked}")
             #else:
             #    logger.critical(f"Many Like button detected !")
@@ -722,7 +750,7 @@ class PostsViewList:
         return self.has_tags
 
     def _check_if_last_post(
-        self, last_description, current_job, reels
+        self, last_description, current_job, reels=False
     ) -> Tuple[bool, str, str, bool, bool, bool]:
         """check if that post has been just interacted"""
         universal_actions = UniversalActions(self.device)
@@ -742,12 +770,12 @@ class PostsViewList:
         has_tags = self._has_tags()
         while True:
             if reels:
-                self.device.dump_hierarchy("./reelFeature.xml")
-                time.sleep(5)
-                universal_actions._swipe_points(
-                            direction=Direction.DOWN, delta_y=200
-                        )
-                continue
+                # universal_actions._swipe_points(
+                #             direction=Direction.DOWN, delta_y=100
+                #         )
+                # self.device.deviceV2.swipe_points([(100, 100), (100, 500)])
+                # self.device.deviceV2.swipe(100, 500, 100, 100, 1)
+                return False, "", username, is_ad, is_hashtag, has_tags
                 """find descrition for reels"""
 
             else:
@@ -759,8 +787,8 @@ class PostsViewList:
                 )
                 """
                 post_description = self.device.find(
-                    resourceId=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT,
-                    textStartsWith=username,
+                     className=ClassName.TEXTVIEW_IGTEXTLAYOUTVIEW,
+                     textStartsWith=username,
                 )
                 if (post_description.exists() or
                     not post_description.exists() and post_description.count_items() >= 1):
@@ -840,27 +868,44 @@ class PostsViewList:
             UniversalActions(self.device)._reload_page()
 
     def _post_owner_reels(self, current_job, mode: Owner, username=None):
+        logger.debug("== _post_owner_reels function ==")
         is_ad = False
         is_hashtag = False
         author_component = self.device.find(
             resourceIdMatches="com.instagram.android:id/clips_author_info_component"
         )
-        if author_component.exists() and author_component.child(index=0).exists():
-            profile_picture_desc = author_component.child(index=0).get_desc()
-            username = profile_picture_desc.split("of ")[-1]
-            return username, is_ad, is_hashtag
+        if author_component.exists() and author_component.child().exists():
+            for element in author_component.child():
+                if "Profile picture of" in element.get_desc():
+                    username = element.get_desc().split("of ")[-1]
+                    return username, is_ad, is_hashtag
+                elif "Profile picture of" in element.get_text():
+                    username = element.get_text().split("of ")[-1]
+                    return username, is_ad, is_hashtag
+        elif self.device.find(resourceId="com.instagram.android:id/clips_single_media_component").exists():
+            parent = self.device.deviceV2.xpath("//*[@resource-id='com.instagram.android:id/clips_single_media_component']/..")
+            cont_desc = parent.info["contentDescription"]
+            username = cont_desc.split('by')[-1] if "Reel by" in cont_desc else None
+        return username, is_ad, is_hashtag
+
+
 
     def _post_owner(self, current_job, mode: Owner, username=None):
         """returns a tuple[var, bool, bool]"""
         is_ad = False
         is_hashtag = False
         if username is None:
+            print("First check: Username of post owner is none")
+
             #post_owner_obj = self.device.find(
             #    resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
             #)
             
             post_owner_obj = self._get_post_owner_obj()
-            username = self._get_post_owner_name() if post_owner_obj.exists() else None            
+            # username = self._get_post_owner_name() if post_owner_obj.exists() else None            
+            username = (
+                   post_owner_obj.get_desc().replace("•", "").strip().split(" ", 1)[0]
+                )
         else:
             print(f"== _post_owner: username exist: {username} ==")
             for _ in range(2):
@@ -928,6 +973,7 @@ class PostsViewList:
                     self.device
                 )._check_if_ad_or_hashtag(post_owner_obj)
             if username is None:
+                print("Second check: Username of post owner is none")
                 #username = (
                 #    post_owner_obj.get_text().replace("•", "").strip().split(" ", 1)[0]
                 #)
@@ -935,6 +981,7 @@ class PostsViewList:
                 # match = re.search(r'Profile picture of (\w+)', post_owner_obj.get_desc())
                 # username = match.group(1) if match else None
                 username = self._get_post_owner_name()
+                
 
             return username, is_ad, is_hashtag
 
@@ -944,12 +991,13 @@ class PostsViewList:
             return None, is_ad, is_hashtag
         
     def _get_post_owner_obj(self):
-        logger.debug("== _get_post_owner_obj() ==")
+        logger.debug("== _get_post_owner_obj function ==")
         owner_obj = self.device.find(
-                resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
+                # resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
+                resourceIdMatches=ResourceID.ROW_FEED_PROFILE_HEADER
             )#.child(index=0, className="android.view.ViewGroup", clickable="true")
         if owner_obj.exists():
-            logger.debug(f"Owner object found: {owner_obj.exists()}")
+            logger.debug(f"Owner object found by ROW_FEED_PROFILE_HEADER: {owner_obj.exists()}")
             return owner_obj
         else:
             owner_obj = self.device.find(
@@ -960,10 +1008,16 @@ class PostsViewList:
             return owner_obj
 
     def _get_post_owner_name(self):
-        return self.device.find(
+        logger.debug("== _get_post_owner_name function ==")
+        username = self.device.find(
             resourceIdMatches=ResourceID.ROW_FEED_PHOTO_PROFILE_NAME
         ).get_text()
-        # logger.debug("== _get_post_owner_name() ==")
+        if username:
+            logger.debug(f"Post Owner username found, is: {username}")
+            return username
+        logger.debug(f"Post Owner username not found !")
+        return None
+
         # user_feed = self.device.find(resourceIdMatches=ResourceID.ROW_FEED_COMMENT_TEXTVIEW_LAYOUT)
         # if user_feed.exists():
         #     match = user_feed.child().get_desc()
@@ -1030,16 +1084,23 @@ class PostsViewList:
         mode: LikeMode,
         skip_media_check: bool = False,
         already_watched: bool = False,
+        reels: bool = False,
     ):
         post_view_list = PostsViewList(self.device)
         opened_post_view = OpenedPostView(self.device)
+        if reels:
+            like_button = self.device.find(resourceId="com.instagram.android:id/like_button")
+            if like_button.exists():
+                logger.info("Reels: Clicking on the little heart ❤️.")
+                self.device.deviceV2(resourceId="com.instagram.android:id/like_button").click()
+                return
+            else:
+                logger.critical("Can't like this post cause Like Button not found!")
+            return
         if skip_media_check:
             print("== skip_media_check in _like_in_post_view() ==")
             return
         media, content_desc = self._get_media_container()
-        # if content_desc is None:
-        #     print("== content_desc is None in _like_in_post_view() ==")
-        #     return
         media_type = None
         if not already_watched and content_desc is not None:
             media_type, _ = post_view_list.detect_media_type(content_desc)
@@ -1055,7 +1116,7 @@ class PostsViewList:
                 self._like_in_post_view(
                     mode=LikeMode.SINGLE_CLICK, skip_media_check=True
                 )
-        elif mode == LikeMode.SINGLE_CLICK:
+        elif mode == LikeMode.SINGLE_CLICK and not reels:
             like_button_exists = self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE)
             if like_button_exists:
                 logger.info("Clicking on the little heart ❤️.")
@@ -1071,16 +1132,20 @@ class PostsViewList:
         logger.info("Open comments of post.")
         self.device.find(resourceIdMatches=ResourceID.ROW_FEED_BUTTON_COMMENT).click()
 
-    def _check_if_liked(self):
+    def _check_if_liked(self, reels=False):
         logger.debug("Check if like succeeded in post view.")
-        bnt_like_obj = self.device.find(
-            resourceIdMatches=ResourceID.ROW_FEED_BUTTON_LIKE
+        bnt_like_obj = (
+            self.device.find(resourceId=ResourceID.ROW_FEED_BUTTON_LIKE) if not reels
+            else self.device.find(resourceId="com.instagram.android:id/like_button")
         )
         if bnt_like_obj.exists():
             STR = "Liked"
-            if self.device.find(descriptionMatches=case_insensitive_re(STR)).exists():
+            if bnt_like_obj.get_selected():
                 logger.debug("Like is present.")
                 return True
+            # if self.device.find(descriptionMatches=case_insensitive_re(STR)).exists():
+            #     logger.debug("Like is present.")
+            #     return True
             else:
                 logger.debug("Like is not present.")
                 return False
@@ -1194,22 +1259,27 @@ class AccountView:
     def loginFromLogoutAccount(self, username, password, check=False):
         # list users
         # Log into another account
+        if self.navigateToLogIn(None, None, check=True):
+            return False
+        log_other = self.device.find(descriptionMatches="Use another profile|Log into another account", clickable="true")
         # Create new account
-        log_other = self.device.find(descriptionMatches="Log into another account", clickable="true")
         create_new = self.device.find(descriptionMatches="Create new account", clickable="true")
         if check:
             logger.debug("Check Logout list ...")
-            return (log_other.exists() and create_new.exists())
-        target_element = self.device.find(descriptionMatches=username, clickable="true")
+            if log_other.exists() and create_new.exists():
+                logger.debug("Logout list found!")
+                return True
+            return False
+        # target_element = self.device.find(description=username, clickable="true")
 
-
-        if target_element.exists():
-            target_element.click()
-        elif log_other.exists() and create_new.exists():
+        # if target_element.exists():
+        #     target_element.click()
+        #     return self.navigateToLogIn(username, password)
+        if log_other.exists() and create_new.exists():
             log_other.click()
-            self.navigateToLogIn(username, password)
+            return self.navigateToLogIn(username, password)
         else:
-            logger.debug("Erreur element of UI not found maybe updated !")
+            logger.critical("Erreur element of UI not found maybe updated !")
             return "Error"
         
 
@@ -1226,9 +1296,13 @@ class AccountView:
         if log_in.exists() and (username and password is not None):
             logger.debug("Log in page found !")
             #random_sleep(2, 3, modulable=False)
-            username_field = self.device.find(text="Username, email or mobile number")
+            username_field = self.device.find(text="Username, email address or mobile number")
             password_field = self.device.find(text="Password")
-            if username_field.exists():
+            editText = lambda deviceV2 : deviceV2.xpath(
+                    "//*[@text = 'Username, email address or mobile number']/../following-sibling::*[1]"
+                ).get_text()
+            
+            if username_field.exists() and  editText(self.device.deviceV2) != username:
                 logger.debug("Entering user's username")
                 username_field.set_text(username, Mode.TYPE)
             if password_field.exists():
@@ -1236,6 +1310,24 @@ class AccountView:
                 password_field.set_text(password, Mode.TYPE)
             log_in.click()
             while log_in.exists(): pass
+            start_time = time.time()
+            while time.time() - start_time < 20:
+                checkSaveYourLoginInfo(self.device)
+                checkPopupAlloIgToSendNotif(self.device)
+                checkSamsungPass(self.device)
+                checkPopupReviewWhether(self.device)
+                checkPopupAllowAccessContacts(self.device)
+                checkPopupSetupOnNewDevice(self.device)
+                checkPopupOpenYourLocationSettings(self.device)
+                checkPopupAllowToAccessLocation(self.device)
+                checkPopupChooseProcessAds(self.device)
+                checkPopupRefresh(self.device)
+
+            if self.device.find(textContains="Incorrect").exists():
+                logger.critical(f"Login or Password incorrect for user: {username}")
+                self.device.find(resourceId="android:id/button1").click() #OK button
+                #next user ?
+                return "Error"
             return True
             # else:
             #     logger.error("Username & Passowrd fields not found within Log In Element")
@@ -1281,6 +1373,8 @@ class AccountView:
             selector.click()
             random_sleep(1, 2, modulable=False)
             add_insta_account = self.device.find(descriptionContains="Add Instagram account")
+            # add_insta_account = self.device.find(descriptionContains="Add account")
+            
             # case: account found, still login
             if self._find_username(username, None):
                 AccountView.navigate_to_main_account(self)
@@ -1296,20 +1390,24 @@ class AccountView:
             elif add_insta_account.exists():
                 add_insta_account.click()
                 random_sleep(2, 3, modulable=False)
-                self.device.find(descriptionContains="Log into existing account").click()
+                # self.device.find(descriptionContains="Log into existing account").click()
+                if self.device.find(descriptionContains="Log in to existing account").exists():
+                    self.device.find(descriptionContains="Log in to existing account").click()
                 random_sleep(2, 3, modulable=False)
-                log_in_another_account = self.device.find(descriptionContains="Log into another account")
+
+                # log_in_another_account = self.device.find(descriptionContains="Log into another account")
+                log_in_another_account = self.device.find(descriptionContains="Use another profile")
                 if log_in_another_account.exists():
                     # case: account found, logout
-                    if self._find_username(username, password):
-                        self.navigate_to_main_account()
-                    else:
+                    # if self._find_username(username, password):
+                    #     self.navigate_to_main_account()
+                    # else:
                         # case: account not found, back to log in
-                        log_in_another_account.click()
-                        random_sleep(2, 3, modulable=False)
-                        if self.navigateToLogIn(username, password):
-                            self.navigate_to_main_account()
-                    return True
+                    log_in_another_account.click()
+                    random_sleep(2, 3, modulable=False)
+                    if self.navigateToLogIn(username, password):
+                        self.navigate_to_main_account()
+                        return True
                 elif self.navigateToLogIn(username, password):
                     self.navigate_to_main_account()
                     return True
@@ -2070,19 +2168,24 @@ class ProfileView(ActionBarView):
             return False
 
     def navigateToFollowing(self):
-        logger.info("Navigate to following.")
-        following_button = self.device.find(
-            resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_FOLLOWING_CONTAINER
-        )
-        if following_button.exists(Timeout.LONG):
-            following_button.click_retry()
-            following_tab = self.device.find(
-                resourceIdMatches=ResourceID.UNIFIED_FOLLOW_LIST_TAB_LAYOUT
-            ).child(textContains="Following")
-            if following_tab.exists(Timeout.LONG):
-                if not following_tab.get_property("selected"):
-                    following_tab.click()
-                return True
+        logger.debug("== navigateToFollowing function ==")
+        # following_button = self.device.find(
+        #     resourceIdMatches=ResourceID.ROW_PROFILE_HEADER_FOLLOWING_CONTAINER
+        # )
+        # if following_button.exists(Timeout.LONG):
+        #     following_button.click_retry()
+        #     following_tab = self.device.find(
+        #         resourceIdMatches=ResourceID.UNIFIED_FOLLOW_LIST_TAB_LAYOUT
+        #     ).child(textContains="Following")
+        #     if following_tab.exists(Timeout.LONG):
+        #         if not following_tab.get_property("selected"):
+        #             following_tab.click()
+        #         return True
+
+        following_button = self.device.find(resourceId="com.instagram.android:id/profile_header_following_stacked_familiar", clickable=True)
+        if following_button.exists():
+            following_button.click(SleepTime.DEFAULT)
+            return True
         else:
             logger.error("Can't find following tab!")
             return False

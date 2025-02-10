@@ -29,6 +29,7 @@ from GramAddict.core.utils import (
     random_choice,
     random_sleep,
     save_crash,
+    checkPopupFollowRequest,
 )
 from GramAddict.core.views import (
     CurrentStoryView,
@@ -281,14 +282,21 @@ def interact_with_user(
                 logger.info("Post already liked!")
             if (opened_post_view and not already_liked) or (opened_post_view and not skip_if_already_liked):
                 if media_type in (MediaType.REEL, MediaType.IGTV, MediaType.VIDEO):
-                    logger.debug(f"Media type REEL, IGTV, VIDEO")
+                    logger.debug(f"Media type REEL, IGTV, VIDEO: {media_type}")
                     opened_post_view.start_video()
                     video_opened = opened_post_view.open_video()
+                    logger.debug(f"video opened: {video_opened}")
                     if video_opened:
                         opened_post_view.watch_media(media_type)
                         like_succeed = opened_post_view.like_video() if not already_liked else False
                         logger.debug("Closing video...")
                         device.back()
+                    # else:
+                    #     like_button = opened_post_view._get_post_like_button()
+                    #     if like_button.exists():
+                    #         like_button.click() if not already_liked else False
+                    #         like_succeed, _ = opened_post_view._is_post_liked()
+                
                 elif media_type in (MediaType.CAROUSEL, MediaType.PHOTO):
                     logger.debug(f"Media type CAROUSEL, PHOTO")
                     if media_type == MediaType.CAROUSEL:
@@ -908,9 +916,10 @@ def _follow(device, username, follow_percentage, args, session_state, swipe_amou
             )
             return False
         elif follow_button.exists():
-            max_tries = 3
+            max_tries = 2
             for n in range(max_tries):
-                follow_button.click()
+                follow_button.click() if follow_button.exists() else None
+                checkPopupFollowRequest(device, username)
                 if device.find(
                     textMatches=UNFOLLOW_REGEX,
                     clickable=True,

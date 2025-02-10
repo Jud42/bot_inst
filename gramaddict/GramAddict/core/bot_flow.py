@@ -16,7 +16,7 @@ from GramAddict.core.log import (
     is_log_file_updated,
     update_log_file_name,
 )
-from GramAddict.core.navigation import check_if_english, nav_to_logout
+from GramAddict.core.navigation import check_if_english, nav_to_logout, removeUserFromLogoutList
 from GramAddict.core.persistent_list import PersistentList
 from GramAddict.core.report import print_full_report
 from GramAddict.core.session_state import SessionState, SessionStateEncoder
@@ -223,6 +223,7 @@ def start_bot(**kwargs):
                 elif logout_list:
                     logger.debug(f"Start from Logout list view...")
                     res = account_view.loginFromLogoutAccount(configs.args.username, configs.args.password)
+
                 
                 if res == "Error":
                     save_crash(device)
@@ -389,6 +390,8 @@ def start_bot(**kwargs):
                     ): 
                         logger.debug("check position after logout !")
                         pass
+                    while account_view.loginFromLogoutAccount(None, None, check=True):
+                        removeUserFromLogoutList(device)
             else:
                 save_crash(device)
                 stop_bot(device, sessions, session_state)

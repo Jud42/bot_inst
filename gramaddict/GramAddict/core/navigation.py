@@ -2,6 +2,19 @@ import logging, sys, time
 
 from colorama import Fore
 from GramAddict.core.device_facade import Timeout, Direction, SleepTime
+from GramAddict.core.utils import (
+    random_sleep,
+    checkSaveYourLoginInfo,
+    checkSamsungPass,
+    checkPopupReviewWhether,
+    checkPopupAllowAccessContacts,
+    checkPopupSetupOnNewDevice,
+    checkPopupAllowToAccessLocation,
+    checkPopupOpenYourLocationSettings,
+    checkPopupChooseProcessAds,
+    checkPopupRefresh,
+)
+
 from GramAddict.core.views import (
     HashTagView,
     PlacesView,
@@ -181,23 +194,52 @@ def nav_to_logout(device):
             logout_element.click(sleep=SleepTime.DEFAULT)
             
             # check if popup save login request appears
-            save_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", textMatches="Save")
-            not_now_button = device.find(resourceIdMatches="com.instagram.android:id/negative_button", textMatches="Not now")
-            choice = save_button
-            if save_button.exists() and not_now_button.exists():
-                choice.click(sleep=SleepTime.DEFAULT)
-            
-            final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text="Log out", clickable="true")
-            if final_button.exists():
-                logger.debug("Log out button found !")
-                final_button.click(sleep=SleepTime.SHORT)
-                return True
-            else:
-                logger.critical("Log out button not found !")
-                return False
+            # save_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", textMatches="Save")
+            # not_now_button = device.find(resourceIdMatches="com.instagram.android:id/negative_button", textMatches="Not now")
+            # choice = save_button
+            # if save_button.exists() and not_now_button.exists():
+            #     choice.click(sleep=SleepTime.DEFAULT)
+            start_time = time.time()
+            while time.time() - start_time < 20:
+                checkSaveYourLoginInfo(device)
+                checkSamsungPass(device)
+                checkPopupReviewWhether(device)
+                checkPopupAllowAccessContacts(device)
+                checkPopupSetupOnNewDevice(device)
+                checkPopupAllowToAccessLocation(device)
+                checkPopupOpenYourLocationSettings(device)
+                checkPopupChooseProcessAds(device)
+                checkPopupRefresh(device)
+            for button in ["Log Out", "Log out"]:
+                final_button = device.find(resourceIdMatches="com.instagram.android:id/primary_button", text=button, clickable="true")
+                if final_button.exists():
+                    logger.debug("Log out button found !")
+                    final_button.click(sleep=SleepTime.SHORT)
+                    return True
+            logger.critical("Log out button not found !")
+            return False
         else:
             logger.critical("Scroll element not found !")
             return False
     else:
         logger.critical("'Option' element not found !")
         return False
+
+def removeUserFromLogoutList(device):
+    logger.debug("== removeUserFromLogoutList function ==")
+
+    while not AccountView(device).navigateToLogIn(None, None, check=True):
+        buttons = ["Settings", "Remove profiles from this device", "Remove"]
+        for button in buttons:
+            rem_i = 2 if button == "Remove" else 1
+            for i in range(rem_i):
+                if device.find(descriptionMatches=button, clickable=True).exists():
+                    device.find(descriptionMatches=button, clickable=True).click(SleepTime.DEFAULT)
+                    random_sleep(5, 7, modulable=True) if button == "Remove" and i == 0 else None
+
+                elif device.find(textMatches=button, clickable=True).exists():
+                    device.find(textMatches=button, clickable=True).click(SleepTime.DEFAULT)
+                    random_sleep(5, 7, modulable=True) if button == "Remove" and i == 0 else None
+                if rem_i == 2 and i == 0:
+                    while (device.find(descriptionMatches=button[1], clickable=True).exists() or
+                    device.find(textMatches=button[1], clickable=True).exists()): pass

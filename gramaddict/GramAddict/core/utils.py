@@ -30,7 +30,6 @@ from GramAddict.core.log import get_log_file_config
 from GramAddict.core.report import print_full_report
 from GramAddict.core.resources import ResourceID as resources
 from GramAddict.core.storage import ACCOUNTS
-
 http = urllib3.PoolManager()
 logger = logging.getLogger(__name__)
 
@@ -656,6 +655,7 @@ def sample_sources(sources, n_sources):
 
 
 def random_choice(number: int) -> bool:
+    logger.debug("==random_choice function==")
     """
     Generate a random int and compare with the argument passed
     :param int number: number passed
@@ -754,7 +754,153 @@ def inspect_current_view(user_list) -> Tuple[int, int]:
     logger.debug(f"There are {n_users} users fully visible in that view.")
     return row_height, n_users
 
+def checkSamsungPass(device):
+    logger.debug("==check popup: Samsung pass==")
+    #text="Save your Instagram password to Samsung Pass?"
+    if device.deviceV2(text="Save your Instagram password to Samsung Pass?").exists():
+        logger.info("==samsung pass view exist==")
+        device.deviceV2.xpath("//android.widget.TextView[@text = 'Save']/..").click(timeout=10)
+        logger.debug("==password saved on samsung pass==")
+        return True
+    return False
 
+def checkPopupReviewWhether(device):
+    logger.debug("==check popup: Review whether==")
+    if device.deviceV2(textContains="Review whether we can").exists():
+        logger.info("==Review whether popup found==")
+        buttons = ["Not now", "Not Now"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+
+def checkSaveYourLoginInfo(device):
+    logger.debug("==check popup: Save your login info?==")
+    #Options: Save or Not Now
+    if device.deviceV2(textContains="Save your login info?").exists():
+        logger.info("==Save your login info popup found==")
+        buttons = ["Not now", "Not Now"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+
+            
+def checkPopupFollowRequest(device, target):
+    logger.debug("==check popup: Follow request==")
+    if device.deviceV2(textContains="request is pending").exists():
+        logger.critical(f"Your follow request to user [{target}] is pending, this user prefer to manually review followers")
+        device.find(resourceId="com.instagram.android:id/primary_button").click() #OK button
+
+def checkPopupAllowAccessContacts(device):
+    logger.debug("==check popup: Allow access to contacts==")
+    if device.deviceV2(textContains="Allow access to contacts").exists():
+        logger.info("==Allow access to contacts popup found==")
+        buttons = ["Skip", "skip"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+
+def checkPopupSetupOnNewDevice(device):
+    logger.debug("==check popup: Set up on new device, allow for location==")
+    if device.deviceV2(textContains="To use Location services").exists():
+        logger.info("==Set up on new device popup found==")
+        buttons = ["Continue", "continue"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+            
+def checkPopupAllowToAccessLocation(device):
+    logger.debug("==check popup: Allow Instagram to access this device’s location?==")
+    if device.deviceV2(textContains="Allow Instagram to access").exists():
+        logger.info("==Allow Instagram to access this device’s location?: popup found==")
+        buttons = ["Don't allow", "Don't Allow"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+            
+def checkPopupAlloIgToSendNotif(device):
+    logger.debug("==check popup: Allow Instagram to send you notifications?==")
+    if device.deviceV2(textContains="Allow Instagram to send you notifications?").exists():
+        logger.info("==Allow Instagram to send you notifications: popup found==")
+        buttons = ["Don't allow", "Don't Allow"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+
+def checkPopupOpenYourLocationSettings(device):
+    logger.debug("==check popup: Open your location settings==")
+    if device.deviceV2(textContains="Open your location settings").exists():
+        logger.info("==Open your location settings: popup found==")
+        buttons = ["Cancel", "cancel"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+            
+def checkPopupChooseProcessAds(device):
+    logger.debug("==check popup: Choose if we process your info==")
+    if device.deviceV2(textContains="Choose if we process your info for ads").exists():
+        logger.info("==Choose if we process your info popup found==")
+        buttons = ["Not now", "Not Now"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+            
+def checkPopupRefresh(device):
+    logger.debug("==check popup: Refresh==")
+    button = "Refresh|refresh"
+    if device.deviceV2(description=button, clickable="true").exists():
+        logger.info("==Choose if we process your info popup found==")
+        device.deviceV2(description=button, clickable="true").click(timeout=5)
+        return
+    elif device.deviceV2(text=button, clickable="true").exists():
+        logger.info("==Choose if we process your info popup found==")
+        device.deviceV2(text=button, clickable="true").click(timeout=5)
+        return
+    
+def checkPopupAddNotesOnPosts(device):
+    logger.debug("==check popup: Add notes on posts and reels for your friends==")
+    if device.deviceV2(textContains="Add notes on posts and reels").exists():
+        logger.info("==Add notes on posts and reels for your friends: popup found==")
+        buttons = ["Not now", "Not Now"]
+        for button in buttons:
+            if device.deviceV2(description=button, clickable="true").exists():
+                device.deviceV2(description=button, clickable="true").click(timeout=5)
+                return
+            elif device.deviceV2(text=button, clickable="true").exists():
+                device.deviceV2(text=button, clickable="true").click(timeout=5)
+                return
+    
 class ActionBlockedError(Exception):
     pass
 
